@@ -36,6 +36,7 @@ PARENT_FOLDER_NAME = 'image_folder'               # this is the parent folder
 SOURCE_WINDOWS = 'C:/'
 SOURCE_LINUX = '/mnt/c/'
 SECOND_SOURCE = 'Users/Rui/Documents/GitHub/PurdueIEEECSociety/'
+THIRD_SOURCE = '../PurdueIEEEdata/'
 torch.manual_seed(1)                              # this controls the random seed so that the result is reproducible
 random.seed(1)
 NUM_CLASS = 5
@@ -53,9 +54,11 @@ learning_rate = 0.0001
 test_size = 218
 # test_size = preprocessing(PARENT_FOLDER_NAME, SOURCE, TRAIN_FOLDER, TEST_FOLDER, DOWSCALING_FACTOR, prob = TEST_PORTION)
 
-train_dataset = torchvision.datasets.ImageFolder(root=(SOURCE + TRAIN_FOLDER +'/'), 
+print("loading the data")
+
+train_dataset = torchvision.datasets.ImageFolder(root=(SOURCE + THIRD_SOURCE + TRAIN_FOLDER +'/'), 
                                                      transform=transforms.ToTensor())
-test_dataset = torchvision.datasets.ImageFolder(root=(SOURCE + TEST_FOLDER +'/'), 
+test_dataset = torchvision.datasets.ImageFolder(root=(SOURCE + THIRD_SOURCE + TEST_FOLDER +'/'), 
                                                     transform=transforms.ToTensor())
 
 train_loader = torch.utils.data.DataLoader(dataset=train_dataset,
@@ -65,6 +68,7 @@ test_loader = torch.utils.data.DataLoader(dataset=test_dataset,
                                               batch_size=BATCH_SIZE, 
                                               shuffle=False)
 
+print("data loading finished, starting the model")
 ### introducing the model
 net = handCNN(num_class = NUM_CLASS, factor = DOWSCALING_FACTOR).to(device)
 loss_func = nn.CrossEntropyLoss()       # we are only using cross entropy loss for now, we would love to add Wasserstein distance into the loss function later on to smooth the update
@@ -128,7 +132,7 @@ def firstTrain(epochs = EPOCHS):
     total_step = len(train_loader)
 
     # prepare the array from which the data is about to be plotted
-    t_plot = np.zeros(epochs)
+    t_plot = np.zeros(epochs + 1)
     train_accuracy_plot = np.zeros(epochs + 1)
     test_accuracy_plot = np.zeros(epochs + 1)
 
@@ -167,5 +171,6 @@ def loadAndTrain(epoch = EPOCHS, index = 1, optimizer_2 = optimizer, best_accura
             torch.save(net, './model1')
 
 if __name__ == '__main__':
-	firstTrain(epochs = 15)
+    print("start training")
+    firstTrain(epochs = 15)
     #loadAndTrain(epoch = 30, index = 4, optimizer_2 = optimizer)

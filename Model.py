@@ -51,7 +51,7 @@ class handCNN(nn.Module):
         out = self.layer3(out)
         out = self.layer4(out)
         out = out.reshape(out.size(0), -1)
-        out = F.sigmoid(self.layer5(out))
+        out = F.relu(self.layer5(out))
         out = self.fc(out)
 
         return out

@@ -1,16 +1,14 @@
 import matplotlib.image as img
 import matplotlib.pyplot as plt
-import torch
 import glob
 import numpy as np
 from sklearn.preprocessing import normalize
 from skimage import color
-from skimage.transform import rescale, resize, downscale_local_mean
+from skimage.transform import rescale, resize
 import time
 import random
-
-
 import warnings
+
 warnings.filterwarnings("ignore")
 
 # this function takes the file name and read it

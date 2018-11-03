@@ -17,7 +17,7 @@ print("Torchvision Version: ",torchvision.__version__)
 
 from skimage import data, color
 from imageProcessing import load_images, show_image, preprocessing, normalize_images
-from Model import handCNN
+from Model import handCNN, handDenseNet
 from dataloader import generic_transform, new_transform
 import random
 
@@ -72,6 +72,7 @@ test_loader = torch.utils.data.DataLoader(dataset=test_dataset,
 print("data loading finished, starting the model")
 ### introducing the model
 net = handCNN(num_class = NUM_CLASS, factor = DOWSCALING_FACTOR).to(device)
+# net = handDenseNet().to(device)
 loss_func = nn.CrossEntropyLoss()       # we are only using cross entropy loss for now, we would love to add Wasserstein distance into the loss function later on to smooth the update
 optimizer = optim.Adam(net.parameters(), lr=learning_rate, betas=(0.99, 0.999), 
                            eps=1e-08, weight_decay=0, amsgrad=True)

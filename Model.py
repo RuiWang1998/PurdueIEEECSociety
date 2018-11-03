@@ -4,15 +4,11 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torchvision.models.densenet as Dense
 
-class handDenseNet(nn.Module):
-    def __init__(self, num_class = 5, factor = 0.1):
-        super(handDenseNet, self).__init__()
-        self.layer8 = nn.Linear()
-    
-    def forward(self, input):
-        output = self.layer8(input)
-        return output
+# In this model the densenet architecture will be explored
+def handDenseNet(num_init_features = 64, num_classes = 5, growth_rate = 32, block_config=(6,), **kwargs):
+    model = Dense.DenseNet(num_init_features = 64, growth_rate = 32, block_config = block_config, num_classes = num_classes, **kwargs)
 
+    return model
 
 # this is a simple model where the number of input channels are 3, the kernel size should be 2-by-2 and the stride is 1, where the padding should only be adjusted according to the kernel size
 # input of this model should be times of size 48 * 64 * 3, a colored, down sampling group

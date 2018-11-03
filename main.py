@@ -39,7 +39,7 @@ SECOND_SOURCE = 'Users/Rui/Documents/GitHub/PurdueIEEECSociety/'
 THIRD_SOURCE = '../PurdueIEEEdata/'
 IMAGE_DIR = './curves/'
 torch.manual_seed(1)                              # this controls the random seed so that the result is reproducible
-random.seed(1)
+random.seed(2)
 NUM_CLASS = 5
 TEST_PORTION = 0.8
 
@@ -52,8 +52,8 @@ BATCH_SIZE = 3
 learning_rate = 0.0001
 
 ### this section prepross the data
-test_size = 218
-# test_size = preprocessing(PARENT_FOLDER_NAME, SOURCE, TRAIN_FOLDER, TEST_FOLDER, DOWSCALING_FACTOR, prob = TEST_PORTION)
+# test_size = 218
+test_size = preprocessing(PARENT_FOLDER_NAME, SOURCE + THIRD_SOURCE, TRAIN_FOLDER, TEST_FOLDER, DOWSCALING_FACTOR, prob = TEST_PORTION)
 
 print("loading the data")
 

@@ -60,7 +60,7 @@ def preprocessing(parent_folder_name, source_dir, train_folder, test_folder, fac
     images = []
     print("Start loading the images")
     start = time.time()
-    for folderName in glob.glob(parent_folder_name + '/*'):
+    for folderName in glob.glob(source_dir + parent_folder_name + '/*'):
         if folderName != 'image_folder/desktop.ini' and folderName != 'image_folder\desktop.ini':
             #print("Start loading the folder: " + folderName)
             images.append(load_images_downscale(folderName, factor = factor))

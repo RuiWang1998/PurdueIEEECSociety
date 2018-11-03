@@ -1,3 +1,5 @@
+import torch
+import torchvision
 import torchvision.transforms as transforms
 import torchvision.transforms.functional as F
 

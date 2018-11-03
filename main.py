@@ -139,6 +139,7 @@ def firstTrain(epochs = EPOCHS):
 
     # training
     train_accuracy_plot[0], test_accuracy_plot[0] = test(net, device, test_loader, loss_func, train_loader, best_accuracy)
+    print("start training")
     for epoch in range(epochs):
         t_plot[epoch + 1] = epoch
         train(net, device, train_loader, optimizer, loss_func, epoch)
@@ -174,6 +175,5 @@ def loadAndTrain(epoch = EPOCHS, index = 1, optimizer_2 = optimizer, best_accura
             torch.save(net, './model1')
 
 if __name__ == '__main__':
-    print("start training")
     firstTrain(epochs = 15)
     #loadAndTrain(epoch = 30, index = 4, optimizer_2 = optimizer)

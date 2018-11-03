@@ -37,7 +37,7 @@ SOURCE_WINDOWS = 'C:/'
 SOURCE_LINUX = '/mnt/c/'
 SECOND_SOURCE = 'Users/Rui/Documents/GitHub/PurdueIEEECSociety/'
 THIRD_SOURCE = '../PurdueIEEEdata/'
-IMAGE_DIR = './curves'
+IMAGE_DIR = './curves/'
 torch.manual_seed(1)                              # this controls the random seed so that the result is reproducible
 random.seed(1)
 NUM_CLASS = 5
@@ -158,7 +158,7 @@ def firstTrain(epochs = EPOCHS):
     plt.ylabel('The accuracy of test and training sets over epochs')
     plt.xlabel('Epochs')
     plt.legend(['training set','test set'])
-    plt.savefig(IMAGE_DIR + str(best_correct) + '_' + str(test_volume) + '_' + str(round(best_accuracy, 2)) + '_' + '.png')
+    plt.savefig(IMAGE_DIR + str(best_correct) + '_' + str(test_volume) + '_' + str(round(best_accuracy)) + '_' + '.png')
     #myFile = open('loss_curve.csv', 'w')
     #with myFile:  
     #   writer = csv.writer(myFile)

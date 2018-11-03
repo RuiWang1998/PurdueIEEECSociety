@@ -35,7 +35,7 @@ TEST_FOLDER = 'image_test_folder'
 PARENT_FOLDER_NAME = 'image_folder'               # this is the parent folder 
 SOURCE_WINDOWS = 'C:/'
 SOURCE_LINUX = '/mnt/c/'
-SECOND_SOURCE = 'Users/Rui/source/repos/handGestureRecogIEEE/handGestureRecogIEEE/'
+SECOND_SOURCE = 'Users/Rui/Documents/GitHub/PurdueIEEECSociety/'
 torch.manual_seed(1)                              # this controls the random seed so that the result is reproducible
 random.seed(1)
 NUM_CLASS = 5
@@ -82,7 +82,7 @@ def train(model, device, train_loader, optimizer, loss_func, epoch):
         loss.backward()
         optimizer.step()
         if batch_idx % 33 == 0:
-            print('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
+            print('Train Epoch: {} [{}/{} ({:.0f}%)] Loss: {:.6f}'.format(
                 epoch, batch_idx * len(data), len(train_loader.dataset),
                 100. * batch_idx / len(train_loader), loss.item()))
     return

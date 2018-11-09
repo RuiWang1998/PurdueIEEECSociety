@@ -1,3 +1,48 @@
+'''
+To process the image individually, Use the following
+
+import matplotlib.image as img
+import matplotlib.pyplot as plt
+import glob
+import numpy as np
+from sklearn.preprocessing import normalize
+from skimage import color
+from skimage.transform import rescale, resize
+import time
+import random
+import warnings
+warnings.filterwarnings("ignore")
+
+from keras.preprocessing.image import ImageDataGenerator
+
+datagen = ImageDataGenerator(
+        rotation_range=40,
+        width_shift_range=0.2,
+        height_shift_range=0.2,
+        rescale=1./255,
+        shear_range=0.2,
+        zoom_range=0.2,
+        horizontal_flip=True,
+        fill_mode='nearest')
+
+TRAIN_FOLDER = 'image_train_folder'               # this is where the processed image goes
+TEST_FOLDER = 'image_test_folder'
+PARENT_FOLDER_NAME = 'image_folder'               # this is the parent folder 
+SOURCE_WINDOWS = 'C:/'
+SOURCE_LINUX = '/mnt/c/'
+SECOND_SOURCE = 'Users/Rui/Documents/GitHub/PurdueIEEECSociety/handGesturePytorch/'
+THIRD_SOURCE = '../../PurdueIEEEdata/'
+IMAGE_DIR = './curves/'
+
+SOURCE = SOURCE_WINDOWS + SECOND_SOURCE
+DOWSCALING_FACTOR = 0.2  
+random.seed(1)
+NUM_CLASS = 5
+TEST_PORTION = 0.8
+from imageProcessing import preprocessing
+test_size = preprocessing(PARENT_FOLDER_NAME, SOURCE + THIRD_SOURCE, TRAIN_FOLDER, TEST_FOLDER, DOWSCALING_FACTOR, prob = TEST_PORTION)
+'''
+
 import matplotlib.image as img
 import matplotlib.pyplot as plt
 import glob

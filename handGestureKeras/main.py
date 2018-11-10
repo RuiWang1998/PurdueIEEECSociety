@@ -1,12 +1,13 @@
 from __future__ import print_function
+import numpy as np
 import keras
 from keras.datasets import mnist
 from keras.models import Sequential
 from keras.layers import Dense, Flatten, Conv2D, MaxPooling2D
-from keras import backend as kbackend
 from keras.preprocessing.image import ImageDataGenerator
 from ModelKeras import Conv2Dense2
-from dataloader import loadData
+from dataloader import loadData, input_shape
+
 
 # this section defines constants
 DOWNSCALING_FACTOR = 0.2                           # this means the number of pixels are reduced to downscaling_factor ^ 2 time of its orginal value
@@ -18,32 +19,33 @@ SOURCE_WINDOWS = 'C:/'
 SOURCE_LINUX = '/mnt/c/'
 SECOND_SOURCE = 'Users/Rui/Documents/GitHub/PurdueIEEECSociety/handGesturePytorch/'
 THIRD_SOURCE = '../../PurdueIEEEdata/'
-IMAGE_DIR = './curves/'                        
-random.seed(1)                                   # this controls the random seed so that the result is reproducible
-NUM_CLASS = 5
-TEST_PORTION = 0.8
+IMAGE_DIR = './curves/'      
 # this needs to change if the platform is changed
 SOURCE = SOURCE_WINDOWS + SECOND_SOURCE
 
 # Hyper parameters
-EPOCHS = 40
+EPOCHS = 1
 BATCH_SIZE = 30
 learning_rate = 0.0001
+NUM_CLASS = 5
 
 # Loading data from directories
 data_train, data_test = loadData(batch_size = BATCH_SIZE, down_scaling_factor =  DOWNSCALING_FACTOR)
 
+input_shape = input_shape(data_train, data_test)
 # introducing the model
-net1 = Conv2Dense2(input_shape, num_category, lossfunc = keras.losses.categorical_crossentropy, optimizer = keras.optimizers.Nadam())
+net1 = Conv2Dense2(input_shape, NUM_CLASS, lossfunc = keras.losses.categorical_crossentropy, optimizer = keras.optimizers.Nadam(lr = learning_rate))
 
-model_log = net1.fit(X_train, y_train, batch_size=batch_size, epochs=num_epoch, verbose=1, validation_data=(X_test, y_test))
+validation_step = len(data_train)
+train_step = len(data_test)
 
-score = net1.evaluate(X_test, y_test, verbose=0)
-print('Test loss:', score[0])
-print('Test accuracy:', score[1])
+net1.fit_generator(
+        data_train,
+        steps_per_epoch = train_step,
+        epochs=1,
+        validation_data=data_test,
+        validation_steps=train_step)
 
-model_digit_json = net1.to_json()
-with open("model_digit.json", "w") as json_file:
-    json_file.write(model_digit_json)
-net1.save_weights("model_digit.h5")
+net1.save_weights('first_try.h5')
+
 print("Saved model to disk")

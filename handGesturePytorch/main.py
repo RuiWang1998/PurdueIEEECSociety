@@ -32,7 +32,7 @@ print(device)
 DOWNSCALING_FACTOR = 0.2                           # this means the number of pixels are reduced to downscaling_factor ^ 2 time of its orginal value
 TRAIN_FOLDER = 'image_train_folder'               # this is where the processed image goes
 TEST_FOLDER = 'image_test_folder'
-ALL_FOLDER = 'image_folder'
+ALL_FOLDER = 'image_folder_rescaled'
 PARENT_FOLDER_NAME = 'image_folder'               # this is the parent folder 
 SOURCE_WINDOWS = 'C:/'
 SOURCE_LINUX = '/mnt/c/'
@@ -62,11 +62,16 @@ train_dataset = torchvision.datasets.ImageFolder(root=(SOURCE + THIRD_SOURCE + T
                                                      transform=transforms.ToTensor())
 test_dataset = torchvision.datasets.ImageFolder(root=(SOURCE + THIRD_SOURCE + TEST_FOLDER +'/'), 
                                                     transform=transforms.ToTensor())
+all_dataset = torchvision.datasets.ImageFolder(root=(SOURCE + THIRD_SOURCE + ALL_FOLDER +'/'), 
+                                                    transform=transforms.ToTensor())
 
 train_loader = torch.utils.data.DataLoader(dataset=train_dataset,
                                                batch_size=BATCH_SIZE, 
                                                shuffle=True)
 test_loader = torch.utils.data.DataLoader(dataset=test_dataset,
+                                              batch_size=BATCH_SIZE, 
+                                              shuffle=False)
+all_loader = torch.utils.data.DataLoader(dataset=all_dataset,
                                               batch_size=BATCH_SIZE, 
                                               shuffle=False)
 

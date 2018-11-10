@@ -35,12 +35,12 @@ THIRD_SOURCE = '../../PurdueIEEEdata/'
 IMAGE_DIR = './curves/'
 
 SOURCE = SOURCE_WINDOWS + SECOND_SOURCE
-DOWSCALING_FACTOR = 0.2  
+DOWNSCALING_FACTOR = 0.2  
 random.seed(1)
 NUM_CLASS = 5
 TEST_PORTION = 0.8
 from imageProcessing import preprocessing
-test_size = preprocessing(PARENT_FOLDER_NAME, SOURCE + THIRD_SOURCE, TRAIN_FOLDER, TEST_FOLDER, DOWSCALING_FACTOR, prob = TEST_PORTION)
+test_size = preprocessing(PARENT_FOLDER_NAME, SOURCE + THIRD_SOURCE, TRAIN_FOLDER, TEST_FOLDER, DOWNSCALING_FACTOR, prob = TEST_PORTION)
 '''
 
 import matplotlib.image as img

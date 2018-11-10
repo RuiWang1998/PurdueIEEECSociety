@@ -29,7 +29,7 @@ print(device)
 
 ### this is for the initialization of some constant and seed
 # this section defines constants
-DOWSCALING_FACTOR = 0.2                           # this means the number of pixels are reduced to downscaling_factor ^ 2 time of its orginal value
+DOWNSCALING_FACTOR = 0.2                           # this means the number of pixels are reduced to downscaling_factor ^ 2 time of its orginal value
 TRAIN_FOLDER = 'image_train_folder'               # this is where the processed image goes
 TEST_FOLDER = 'image_test_folder'
 ALL_FOLDER = 'image_folder'
@@ -54,7 +54,7 @@ learning_rate = 0.0001
 
 ### this section prepross the data
 test_size = 4585
-# test_size = preprocessing(PARENT_FOLDER_NAME, SOURCE + THIRD_SOURCE, TRAIN_FOLDER, TEST_FOLDER, DOWSCALING_FACTOR, prob = TEST_PORTION)
+# test_size = preprocessing(PARENT_FOLDER_NAME, SOURCE + THIRD_SOURCE, TRAIN_FOLDER, TEST_FOLDER, DOWNSCALING_FACTOR, prob = TEST_PORTION)
 
 print("loading the data")
 
@@ -72,7 +72,7 @@ test_loader = torch.utils.data.DataLoader(dataset=test_dataset,
 
 print("data loading finished, starting the model")
 ### introducing the model
-net = handCNN(num_class = NUM_CLASS, factor = DOWSCALING_FACTOR).to(device)
+net = handCNN(num_class = NUM_CLASS, factor = DOWNSCALING_FACTOR).to(device)
 # net = handDenseNet().to(device)
 loss_func = nn.CrossEntropyLoss()       # we are only using cross entropy loss for now, we would love to add Wasserstein distance into the loss function later on to smooth the update
 optimizer = optim.Adam(net.parameters(), lr=learning_rate, betas=(0.99, 0.999), 

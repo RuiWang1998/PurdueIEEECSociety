@@ -30,17 +30,17 @@ learning_rate = 0.0001
 NUM_CLASS = 5
 
 # Loading data from directories
-data_train, data_test = loadData(batch_size = BATCH_SIZE, down_scaling_factor =  DOWNSCALING_FACTOR)
+data_train, data_test = loadData(batch_size=BATCH_SIZE, down_scaling_factor=DOWNSCALING_FACTOR)
 
-input_shape = input_shape(data_train, data_test)
+input_shape = input_shape(data_train, data_test, downscaling_factor=DOWNSCALING_FACTOR)
 # introducing the model
 net1 = Conv2Dense2(input_shape, NUM_CLASS, lossfunc = keras.losses.categorical_crossentropy, optimizer = keras.optimizers.Nadam(lr = learning_rate))
 
-validation_step = len(data_train)
-train_step = len(data_test)
+validation_step = len(data_test)
+train_step = len(data_train)
 
 net1.fit_generator(
-        data_train,
+        generator=data_train,
         steps_per_epoch = train_step,
         epochs=1,
         validation_data=data_test,

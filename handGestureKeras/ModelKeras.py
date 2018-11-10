@@ -12,6 +12,6 @@ def Conv2Dense2(input_shape, num_category, lossfunc = keras.losses.categorical_c
     Conv2Dense2.add(Dense(128, activation='relu'))    # Adding a dense layer at the end
     Conv2Dense2.add(Dense(num_category, activation='softmax'))   # Softmax activation function to get probability distributions
     # Categorical Crossentropy loss function with Adadelta optimizer
-    Conv2Dense2.compile(loss=keras.losses.categorical_crossentropy, optimizer=keras.optimizers.Adadelta(), metrics=['accuracy'])
+    Conv2Dense2.compile(loss=lossfunc, optimizer=optimizer, metrics=['accuracy'])
 
     return Conv2Dense2

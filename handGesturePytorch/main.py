@@ -17,7 +17,6 @@ print("PyTorch Version: ",torch.__version__)
 print("Torchvision Version: ",torchvision.__version__)
 
 from skimage import data, color
-from imageProcessing import load_images, show_image, preprocessing, normalize_images
 from Model import handCNN, handDenseNet
 from dataloader import generic_transform, new_transform
 import random
@@ -57,8 +56,6 @@ BATCH_SIZE = 30
 learning_rate = 0.0001
 
 ### this section prepross the data
-test_size = 4585
-# test_size = preprocessing(PARENT_FOLDER_NAME, SOURCE + THIRD_SOURCE, TRAIN_FOLDER, TEST_FOLDER, DOWNSCALING_FACTOR, prob = TEST_PORTION)
 
 print("loading the data")
 
@@ -170,11 +167,6 @@ def firstTrain(epochs = EPOCHS):
     plt.xlabel('Epochs')
     plt.legend(['training set','test set'])
     plt.savefig(IMAGE_DIR + str(int(best_correct/100)) + '_' + str(test_volume) + '_' + str(round(best_accuracy)) + '_' + '.png')
-    #myFile = open('loss_curve.csv', 'w')
-    #with myFile:  
-    #   writer = csv.writer(myFile)
-    #   data = [x_plot, loss_plot]
-    #   writer.writerows(data)
 
 def loadAndTrain(model, dir, epoch = EPOCHS, index = 1, optimizer_2 = optimizer, best_accuracy = 90):
     net = torch.load(dir + model)
@@ -184,8 +176,8 @@ def loadAndTrain(model, dir, epoch = EPOCHS, index = 1, optimizer_2 = optimizer,
         if test_accuracy > best_accuracy:
             best_accuracy = test_accuracy
             torch.save(net, dir + model)
+            
+    return
 
-
-if __name__ == '__main__':
-    #firstTrain(epochs = EPOCHS)
-    loadAndTrain(model = 'modelAug', epoch = 30, index = 4, optimizer_2 = optimizer, dir = './models/')
+#firstTrain(epochs = EPOCHS)
+loadAndTrain(model = 'modelAug', epoch = 30, index = 4, optimizer_2 = optimizer, dir = './models/')

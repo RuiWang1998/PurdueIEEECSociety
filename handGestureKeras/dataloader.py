@@ -6,6 +6,7 @@ DOWNSCALING_FACTOR = 0.2                           # this means the number of pi
 TRAIN_FOLDER = 'image_train_folder'               # this is where the processed image goes
 TEST_FOLDER = 'image_test_folder'
 ALL_FOLDER = 'image_folder'
+AUG_TRAIN = 'image_train_augmented'
 PARENT_FOLDER_NAME = 'image_folder'               # this is the parent folder 
 SOURCE_WINDOWS = 'C:/'
 SOURCE_LINUX = '/mnt/c/'
@@ -16,11 +17,10 @@ seed = 1
 NUM_CLASS = 5
 TEST_PORTION = 0.8
 # this needs to change if the platform is changed
-SOURCE = SOURCE_WINDOWS + SECOND_SOURCE + THIRD_SOURCE
+SOURCE = SOURCE_LINUX + SECOND_SOURCE + THIRD_SOURCE
 
 # Hyper parameters
-BATCH_SIZE = 30
-learning_rate = 0.0001
+BATCH_SIZE = 5
 input_channel = 3
 resolution = (480, 640)
 
@@ -32,12 +32,13 @@ train_datagen = ImageDataGenerator(
         shear_range=0.2,
         zoom_range=0.2,
         horizontal_flip=True,
+        vertical_flip=True,
         channel_shift_range = 0.4,
         fill_mode='nearest')
 
 test_datagen = ImageDataGenerator(rescale=1./255)
 
-def loadData(batch_size = BATCH_SIZE, down_scaling_factor =  DOWNSCALING_FACTOR):
+def loadData(batch_size = BATCH_SIZE, down_scaling_factor =  DOWNSCALING_FACTOR, source_dir = SOURCE):
 
     row = int(resolution[0] * down_scaling_factor)
     col = int(resolution[1] * down_scaling_factor)
@@ -46,7 +47,7 @@ def loadData(batch_size = BATCH_SIZE, down_scaling_factor =  DOWNSCALING_FACTOR)
     # subfolers of 'data/train', and indefinitely generate
     # batches of augmented image data
     train_generator = train_datagen.flow_from_directory(
-            directory=SOURCE + TRAIN_FOLDER,  # this is the target directory
+            directory=source_dir + TRAIN_FOLDER,  # this is the target directory
             target_size=(row, col),  # all images will be resized to 150x150
             batch_size=batch_size,
             class_mode='categorical',
@@ -55,13 +56,20 @@ def loadData(batch_size = BATCH_SIZE, down_scaling_factor =  DOWNSCALING_FACTOR)
 
     # this is a similar generator, for validation data
     validation_generator = test_datagen.flow_from_directory(
-            directory=SOURCE + TEST_FOLDER,
+            directory=source_dir + TEST_FOLDER,
             target_size=(row, col),
             batch_size=batch_size,
             color_mode="rgb",
             class_mode='categorical')
 
-    return train_generator, validation_generator
+    all_generator = test_datagen.flow_from_directory(
+            directory=source_dir + ALL_FOLDER,
+            target_size=(row, col),
+            batch_size=batch_size,
+            color_mode="rgb",
+            class_mode='categorical')
+
+    return train_generator, validation_generator, all_generator
 
 def input_shape(train_data, test_data, downscaling_factor = DOWNSCALING_FACTOR):
 

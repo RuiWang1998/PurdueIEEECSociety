@@ -11,6 +11,7 @@ import time
 import glob
 import csv
 import math
+import platform
 
 print("PyTorch Version: ",torch.__version__)
 print("Torchvision Version: ",torchvision.__version__)
@@ -45,7 +46,10 @@ NUM_CLASS = 5
 TEST_PORTION = 0.8
 
 # this needs to change if the platform is changed
-SOURCE = SOURCE_WINDOWS + SECOND_SOURCE
+if platform.system() == 'Linux':
+    SOURCE = SOURCE_LINUX + SECOND_SOURCE
+else:
+    SOURCE = SOURCE_WINDOWS + SECOND_SOURCE
 
 # Hyper parameters
 EPOCHS = 40

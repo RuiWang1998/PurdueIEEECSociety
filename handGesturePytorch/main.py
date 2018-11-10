@@ -20,35 +20,13 @@ from skimage import data, color
 from Model import handCNN, handDenseNet
 from dataloader import generic_transform, new_transform
 import random
+from constants import DOWNSCALING_FACTOR, TRAIN_FOLDER, TEST_FOLDER, ALL_FOLDER, PARENT_FOLDER_NAME, SOURCE, EPOCHS, BATCH_SIZE, learning_rate, NUM_CLASS, DATA_SOURCE
 
 
 # Device configuration
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 # device = 'cpu'
 print(device)
-
-### this is for the initialization of some constant and seed
-# this section defines constants
-DOWNSCALING_FACTOR = 0.2                           # this means the number of pixels are reduced to downscaling_factor ^ 2 time of its orginal value
-TRAIN_FOLDER = 'image_train_folder'               # this is where the processed image goes
-TEST_FOLDER = 'image_test_folder'
-ALL_FOLDER = 'image_folder_rescaled'
-PARENT_FOLDER_NAME = 'image_folder'               # this is the parent folder 
-SOURCE_WINDOWS = 'C:/'
-SOURCE_LINUX = '/mnt/c/'
-SECOND_SOURCE = 'Users/Rui/Documents/GitHub/PurdueIEEECSociety/handGesturePytorch/'
-THIRD_SOURCE = '../../PurdueIEEEdata/'
-IMAGE_DIR = './curves/'
-torch.manual_seed(1)                              # this controls the random seed so that the result is reproducible
-random.seed(1)
-NUM_CLASS = 5
-TEST_PORTION = 0.8
-
-# this needs to change if the platform is changed
-if platform.system() == 'Linux':
-    SOURCE = SOURCE_LINUX + SECOND_SOURCE
-else:
-    SOURCE = SOURCE_WINDOWS + SECOND_SOURCE
 
 # Hyper parameters
 EPOCHS = 40
@@ -59,11 +37,11 @@ learning_rate = 0.0001
 
 print("loading the data")
 
-train_dataset = torchvision.datasets.ImageFolder(root=(SOURCE + THIRD_SOURCE + TRAIN_FOLDER +'/'), 
+train_dataset = torchvision.datasets.ImageFolder(root=(SOURCE + DATA_SOURCE + TRAIN_AUG +'/'), 
                                                      transform=transforms.ToTensor())
-test_dataset = torchvision.datasets.ImageFolder(root=(SOURCE + THIRD_SOURCE + TEST_FOLDER +'/'), 
+test_dataset = torchvision.datasets.ImageFolder(root=(SOURCE + DATA_SOURCE + TEST_AUG +'/'), 
                                                     transform=transforms.ToTensor())
-all_dataset = torchvision.datasets.ImageFolder(root=(SOURCE + THIRD_SOURCE + ALL_FOLDER +'/'), 
+all_dataset = torchvision.datasets.ImageFolder(root=(SOURCE + DATA_SOURCE + ALL_FOLDER +'/'), 
                                                     transform=transforms.ToTensor())
 
 train_loader = torch.utils.data.DataLoader(dataset=train_dataset,

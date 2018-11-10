@@ -32,6 +32,7 @@ print(device)
 DOWSCALING_FACTOR = 0.2                           # this means the number of pixels are reduced to downscaling_factor ^ 2 time of its orginal value
 TRAIN_FOLDER = 'image_train_folder'               # this is where the processed image goes
 TEST_FOLDER = 'image_test_folder'
+ALL_FOLDER = 'image_folder'
 PARENT_FOLDER_NAME = 'image_folder'               # this is the parent folder 
 SOURCE_WINDOWS = 'C:/'
 SOURCE_LINUX = '/mnt/c/'
@@ -47,12 +48,12 @@ TEST_PORTION = 0.8
 SOURCE = SOURCE_WINDOWS + SECOND_SOURCE
 
 # Hyper parameters
-EPOCHS = 3
+EPOCHS = 40
 BATCH_SIZE = 30
 learning_rate = 0.0001
 
 ### this section prepross the data
-test_size = 4610
+test_size = 4585
 # test_size = preprocessing(PARENT_FOLDER_NAME, SOURCE + THIRD_SOURCE, TRAIN_FOLDER, TEST_FOLDER, DOWSCALING_FACTOR, prob = TEST_PORTION)
 
 print("loading the data")
@@ -151,7 +152,7 @@ def firstTrain(epochs = EPOCHS):
             best_correct = round(best_accuracy * len(test_loader.dataset))
             test_volume = len(test_loader.dataset)
             dir = './models/'
-            filename = dir + 'model' + str(round(best_accuracy, 2))
+            filename = dir + 'modelAug'
             torch.save(net, filename)
     
     plt.plot(t_plot, train_accuracy_plot, 'b', t_plot, test_accuracy_plot, 'r')
@@ -166,15 +167,16 @@ def firstTrain(epochs = EPOCHS):
     #   data = [x_plot, loss_plot]
     #   writer.writerows(data)
 
-def loadAndTrain(epoch = EPOCHS, index = 1, optimizer_2 = optimizer, best_accuracy = 90):
-    net = torch.load('model'+str(index-1))
+def loadAndTrain(model, dir, epoch = EPOCHS, index = 1, optimizer_2 = optimizer, best_accuracy = 90):
+    net = torch.load(dir + model)
     for epochs in range(epoch):
-        train(net, device, train_loader, optimizer, loss_func, epochs)
-        test_accuracy = test(net, device, test_loader, loss_func, train_loader, best_accuracy)
+        train(net, device, train_loader, optimizer_2, loss_func, epochs)
+        _, test_accuracy = test(net, device, test_loader, loss_func, train_loader, best_accuracy)
         if test_accuracy > best_accuracy:
             best_accuracy = test_accuracy
-            torch.save(net, './model1')
+            torch.save(net, dir + model)
+
 
 if __name__ == '__main__':
-    firstTrain(epochs = 15)
-    #loadAndTrain(epoch = 30, index = 4, optimizer_2 = optimizer)
+    #firstTrain(epochs = EPOCHS)
+    loadAndTrain(model = 'modelAug', epoch = 30, index = 4, optimizer_2 = optimizer, dir = './models/')

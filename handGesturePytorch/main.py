@@ -28,11 +28,6 @@ device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 # device = 'cpu'
 print(device)
 
-# Hyper parameters
-EPOCHS = 40
-BATCH_SIZE = 30
-learning_rate = 0.0001
-
 ### this section prepross the data
 
 print("loading the data")

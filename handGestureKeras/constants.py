@@ -13,6 +13,7 @@ SOURCE_LINUX = '/mnt/c/'
 SECOND_SOURCE = 'Users/Rui/Documents/GitHub/PurdueIEEECSociety/handGesturePytorch/'
 DATA_SOURCE = '../../PurdueIEEEdata/'
 IMAGE_DIR = './curves/'  
+DROP_RATE = 0.5
 
 # this needs to change if the platform is changed
 if platform.system() == 'Linux':
@@ -21,7 +22,7 @@ else:
     SOURCE = SOURCE_WINDOWS + SECOND_SOURCE
 
 # Hyper parameters
-EPOCHS = 30
+EPOCHS = 300
 BATCH_SIZE = 18
 learning_rate = 0.0001
 NUM_CLASS = 5

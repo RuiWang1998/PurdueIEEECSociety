@@ -11,6 +11,7 @@ import glob
 import csv
 import math
 import platform
+import torch.onnx
 
 print("PyTorch Version: ",torch.__version__)
 print("Torchvision Version: ",torchvision.__version__)
@@ -19,7 +20,7 @@ from skimage import data, color
 from Model import handCNNDense, handCNN
 from dataloader import generic_transform, new_transform
 import random
-from constants import DOWNSCALING_FACTOR, TRAIN_FOLDER, TEST_FOLDER, ALL_FOLDER, PARENT_FOLDER_NAME, SOURCE, EPOCHS, BATCH_SIZE, learning_rate, NUM_CLASS, DATA_SOURCE, TEST_AUG, TRAIN_AUG
+from constants import DOWNSCALING_FACTOR, TRAIN_FOLDER, TEST_FOLDER, ALL_FOLDER, PARENT_FOLDER_NAME, SOURCE, EPOCHS, BATCH_SIZE, learning_rate, NUM_CLASS, DATA_SOURCE, TEST_AUG, TRAIN_AUG, IMAGE_DIR
 
 
 # Device configuration
@@ -70,9 +71,10 @@ def train(model, device, train_loader, optimizer, loss_func, epoch):
             print('Train Epoch: {} [{}/{} ({:.0f}%)] Loss: {:.6f}'.format(
                 epoch, batch_idx * len(data), len(train_loader.dataset),
                 100. * batch_idx / len(train_loader), loss.item()))
+
     return
 
-def test(model, device, test_loader, loss_func, train_loader, best_test_accuracy):
+def test(model, device, test_loader, loss_func, train_loader, best_test_accuracy, save = False):
     model.eval()
     test_loss = 0
     train_loss = 0
@@ -92,6 +94,8 @@ def test(model, device, test_loader, loss_func, train_loader, best_test_accuracy
             train_loss += loss_func(output, target).item() # sum up batch loss
             pred = output.max(1, keepdim=True)[1] # get the index of the max log-probability
             correct_train += pred.eq(target.view_as(pred)).sum().item()
+        if save == True:
+            torch.onnx.export(model, data, "onnx.onnx")
 
     test_loss /= len(test_loader.dataset)
     train_loss /= len(train_loader.dataset)
@@ -104,7 +108,7 @@ def test(model, device, test_loader, loss_func, train_loader, best_test_accuracy
 
     return 100. * correct_train / len(train_loader.dataset), 100. * correct_test / len(test_loader.dataset)
     
-def firstTrain(epochs = EPOCHS):
+def firstTrain(output_dir, output_file, epochs = EPOCHS):
     start = time.time()
     # Train the model
     best_accuracy = 0
@@ -129,8 +133,8 @@ def firstTrain(epochs = EPOCHS):
             best_accuracy = test_accuracy_plot[epoch]
             best_correct = round(best_accuracy * len(test_loader.dataset))
             test_volume = len(test_loader.dataset)
-            dir = './models/'
-            filename = dir + 'modelDenseAug'
+            dir = output_dir
+            filename = dir + output_file
             torch.save(net, filename)
     
     plt.plot(t_plot, train_accuracy_plot, 'b', t_plot, test_accuracy_plot, 'r')
@@ -151,5 +155,12 @@ def loadAndTrain(model, dir, epoch = EPOCHS, index = 1, optimizer_2 = optimizer,
             
     return
 
-firstTrain(epochs = EPOCHS)
-# loadAndTrain(model = 'modelDenseAug', epoch = 30, index = 4, optimizer_2 = optimizer, dir = './models/')
+def export(model, dir, optimizer_2 = optimizer):
+    net = torch.load(dir + model)
+    test(net, device, test_loader, loss_func, test_loader, 90., save = True)
+
+model_name = 'modelDenseAug'
+model_dir = './models/'
+# firstTrain(model_dir, model_name, epochs = EPOCHS)
+loadAndTrain(model = model_name, epoch = 5, index = 4, optimizer_2 = optimizer, dir = model_dir)
+# export(model_name, model_dir, optimizer_2 = optimizer)

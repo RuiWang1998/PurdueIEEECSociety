@@ -6,7 +6,7 @@ from keras.preprocessing.image import ImageDataGenerator
 from ModelKeras import Conv2Dense2, handCNN
 from dataloader import loadData, input_shape
 from trainTest import save_model_keras, firstTrain, loadAndTrain
-from constants import DOWNSCALING_FACTOR, TRAIN_FOLDER, TEST_FOLDER, ALL_FOLDER, PARENT_FOLDER_NAME, SOURCE, EPOCHS, BATCH_SIZE, learning_rate, NUM_CLASS, DATA_SOURCE
+from constants import DOWNSCALING_FACTOR, TRAIN_FOLDER, TEST_FOLDER, ALL_FOLDER, PARENT_FOLDER_NAME, SOURCE, EPOCHS, BATCH_SIZE, learning_rate, NUM_CLASS, DATA_SOURCE, DROP_RATE
 
 # Loading data from directories
 data_train, data_test, all_test = loadData(batch_size=BATCH_SIZE, down_scaling_factor=DOWNSCALING_FACTOR, source_dir=SOURCE+DATA_SOURCE)
@@ -19,7 +19,7 @@ if __name__ == '__main__':
     weights_file = './models/first_try.h5'
     json_file_name = "model.json"
 
-    model = firstTrain(input_shape, data_train, data_test, epochs = 1, model = handCNN)
+    # model = firstTrain(input_shape, data_train, data_test, epochs = EPOCHS, model = handCNN, dir_name_weight = weights_file, dir_json = json_file_name)
 
-    # model = loadAndTrain(data_train, data_test, weights_file, epoch = 3, json_name = json_file_name)
+    model = loadAndTrain(data_train, data_test, weights_file, epoch = EPOCHS, json_name = json_file_name)
     save_model_keras(model, dir_json = json_file_name, dir_name_weight = weights_file)

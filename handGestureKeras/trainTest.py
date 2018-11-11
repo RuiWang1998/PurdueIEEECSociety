@@ -3,11 +3,10 @@ from keras.models import model_from_json
 from ModelKeras import Conv2Dense2, handCNN
 
 # Hyper parameters
-EPOCHS = 2
 learning_rate = 0.0001
 NUM_CLASS = 5
 
-def firstTrain(input_shape, data_train, data_test, epochs = EPOCHS, model = handCNN):
+def firstTrain(input_shape, data_train, data_test,  dir_name_weight, dir_json, epochs = 2, model = handCNN):
     # introducing the model
     # net1 = Conv2Dense2(input_shape, NUM_CLASS)
     net1 = model(input_shape, NUM_CLASS)
@@ -19,13 +18,21 @@ def firstTrain(input_shape, data_train, data_test, epochs = EPOCHS, model = hand
     net1.fit_generator(
             generator=data_train,
             steps_per_epoch = train_step,
-            epochs=EPOCHS,
+            epochs=epochs,
             validation_data=data_test,
-            validation_steps=train_step)
+            validation_steps=train_step,
+            callbacks = [
+        keras.callbacks.ModelCheckpoint(dir_name_weight, monitor='val_loss', verbose=0, save_best_only=True, mode='auto'),
+        keras.callbacks.EarlyStopping(monitor='val_loss', patience=20, verbose=0, mode='auto')])
 
     score = net1.evaluate_generator(data_test)
     print('Test loss:', score[0])
     print('Test accuracy:', score[1])
+
+    weights_file = './models/best_try.h5'
+    json_file_name = "model_best.json"
+
+    save_model_keras(net1, dir_json = json_file_name, dir_name_weight = dir_name_weight)
 
     return net1
 
@@ -57,6 +64,11 @@ def loadAndTrain(data_train, data_test, weight_file, json_name = 'model.json', e
     score = loaded_model.evaluate_generator(data_test)
     print('Test loss:', score[0])
     print('Test accuracy:', score[1])
+
+    weights_file = './models/best_try.h5'
+    json_file_name = "model_best.json"
+
+    save_model_keras(loaded_model, dir_json = json_file_name, dir_name_weight = weights_file)
     
     return loaded_model
 

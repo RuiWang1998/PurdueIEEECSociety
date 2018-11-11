@@ -49,7 +49,14 @@ def loadAndTrain(data_train, data_test, weight_file, json_name = 'model.json', e
             steps_per_epoch = train_step,
             epochs=epoch,
             validation_data=data_test,
-            validation_steps=train_step)
+            validation_steps=train_step,
+            callbacks = [
+        keras.callbacks.ModelCheckpoint(weight_file, monitor='val_loss', verbose=0, save_best_only=True, mode='auto'),
+        keras.callbacks.EarlyStopping(monitor='val_loss', patience=20, verbose=0, mode='auto')])
+
+    score = loaded_model.evaluate_generator(data_test)
+    print('Test loss:', score[0])
+    print('Test accuracy:', score[1])
     
     return loaded_model
 

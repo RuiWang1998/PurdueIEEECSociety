@@ -20,6 +20,9 @@ else:
 
 # Hyper parameters
 EPOCHS = 30
-BATCH_SIZE = 5
+BATCH_SIZE = 18
 learning_rate = 0.0001
 NUM_CLASS = 5
+
+input_channel = 3
+resolution = (480, 640)

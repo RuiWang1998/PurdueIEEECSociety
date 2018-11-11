@@ -18,8 +18,7 @@ if __name__ == '__main__':
     weights_file = './models/first_try.h5'
     json_file_name = "model.json"
 
-    # model = firstTrain(input_shape, data_train, data_test, epochs = 1, model = handCNN)
-    # save_model_keras(model, dir_json = json_file_name, dir_name_weight = weights_file)
+    model = firstTrain(input_shape, data_train, data_test, epochs = 1, model = handCNN)
 
-    model = loadAndTrain(data_train, data_test, weights_file, epoch = 30, json_name = json_file_name)
+    # model = loadAndTrain(data_train, data_test, weights_file, epoch = 3, json_name = json_file_name)
     save_model_keras(model, dir_json = json_file_name, dir_name_weight = weights_file)

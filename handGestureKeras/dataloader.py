@@ -1,28 +1,7 @@
 from keras.preprocessing.image import ImageDataGenerator, array_to_img, img_to_array, load_img
 from keras import backend as kbackend
-
-# this section defines constants
-DOWNSCALING_FACTOR = 0.2                           # this means the number of pixels are reduced to downscaling_factor ^ 2 time of its orginal value
-TRAIN_FOLDER = 'image_train_folder'               # this is where the processed image goes
-TEST_FOLDER = 'image_test_folder'
-ALL_FOLDER = 'image_folder'
-AUG_TRAIN = 'image_train_augmented'
-PARENT_FOLDER_NAME = 'image_folder'               # this is the parent folder 
-SOURCE_WINDOWS = 'C:/'
-SOURCE_LINUX = '/mnt/c/'
-SECOND_SOURCE = 'Users/Rui/Documents/GitHub/PurdueIEEECSociety/handGesturePytorch/'
-THIRD_SOURCE = '../../PurdueIEEEdata/'
-IMAGE_DIR = './curves/'                        
-seed = 1
-NUM_CLASS = 5
-TEST_PORTION = 0.8
-# this needs to change if the platform is changed
-SOURCE = SOURCE_LINUX + SECOND_SOURCE + THIRD_SOURCE
-
-# Hyper parameters
-BATCH_SIZE = 5
-input_channel = 3
-resolution = (480, 640)
+import platform
+from constants import DOWNSCALING_FACTOR, TRAIN_FOLDER, TEST_FOLDER, ALL_FOLDER, PARENT_FOLDER_NAME, SOURCE, EPOCHS, BATCH_SIZE, learning_rate, NUM_CLASS, DATA_SOURCE, resolution, input_channel
 
 train_datagen = ImageDataGenerator(
         rotation_range=40,

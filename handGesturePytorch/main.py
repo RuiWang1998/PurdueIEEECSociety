@@ -33,7 +33,7 @@ print("loading the data")
 
 train_dataset = torchvision.datasets.ImageFolder(root=(SOURCE + DATA_SOURCE + TRAIN_AUG +'/'), 
                                                      transform=transforms.ToTensor())
-test_dataset = torchvision.datasets.ImageFolder(root=(SOURCE + DATA_SOURCE + TEST_AUG +'/'), 
+test_dataset = torchvision.datasets.ImageFolder(root=(SOURCE + DATA_SOURCE + TEST_FOLDER +'/'), 
                                                     transform=transforms.ToTensor())
 all_dataset = torchvision.datasets.ImageFolder(root=(SOURCE + DATA_SOURCE + ALL_FOLDER +'/'), 
                                                     transform=transforms.ToTensor())

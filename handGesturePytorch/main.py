@@ -3,7 +3,6 @@ import torch.nn as nn
 import torch.optim as optim
 import numpy as np
 import torchvision
-from torchvision.models.densenet import DenseNet
 from torchvision import datasets, models, transforms
 import torch.nn as nn
 import matplotlib.pyplot as plt
@@ -17,10 +16,10 @@ print("PyTorch Version: ",torch.__version__)
 print("Torchvision Version: ",torchvision.__version__)
 
 from skimage import data, color
-from Model import handCNN, handDenseNet
+from Model import handCNNDense, handCNN
 from dataloader import generic_transform, new_transform
 import random
-from constants import DOWNSCALING_FACTOR, TRAIN_FOLDER, TEST_FOLDER, ALL_FOLDER, PARENT_FOLDER_NAME, SOURCE, EPOCHS, BATCH_SIZE, learning_rate, NUM_CLASS, DATA_SOURCE
+from constants import DOWNSCALING_FACTOR, TRAIN_FOLDER, TEST_FOLDER, ALL_FOLDER, PARENT_FOLDER_NAME, SOURCE, EPOCHS, BATCH_SIZE, learning_rate, NUM_CLASS, DATA_SOURCE, TEST_AUG, TRAIN_AUG
 
 
 # Device configuration
@@ -51,7 +50,7 @@ all_loader = torch.utils.data.DataLoader(dataset=all_dataset,
 
 print("data loading finished, starting the model")
 ### introducing the model
-net = handCNN(num_class = NUM_CLASS, factor = DOWNSCALING_FACTOR).to(device)
+net = handCNNDense(num_class = NUM_CLASS, factor = DOWNSCALING_FACTOR).to(device)
 # net = handDenseNet().to(device)
 loss_func = nn.CrossEntropyLoss()       # we are only using cross entropy loss for now, we would love to add Wasserstein distance into the loss function later on to smooth the update
 optimizer = optim.Adam(net.parameters(), lr=learning_rate, betas=(0.99, 0.999), 
@@ -131,7 +130,7 @@ def firstTrain(epochs = EPOCHS):
             best_correct = round(best_accuracy * len(test_loader.dataset))
             test_volume = len(test_loader.dataset)
             dir = './models/'
-            filename = dir + 'modelAug'
+            filename = dir + 'modelDenseAug'
             torch.save(net, filename)
     
     plt.plot(t_plot, train_accuracy_plot, 'b', t_plot, test_accuracy_plot, 'r')
@@ -152,5 +151,5 @@ def loadAndTrain(model, dir, epoch = EPOCHS, index = 1, optimizer_2 = optimizer,
             
     return
 
-#firstTrain(epochs = EPOCHS)
-loadAndTrain(model = 'modelAug', epoch = 30, index = 4, optimizer_2 = optimizer, dir = './models/')
+firstTrain(epochs = EPOCHS)
+# loadAndTrain(model = 'modelDenseAug', epoch = 30, index = 4, optimizer_2 = optimizer, dir = './models/')

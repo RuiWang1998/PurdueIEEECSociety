@@ -14,6 +14,7 @@ data_train, data_test, all_test = loadData(batch_size=BATCH_SIZE, down_scaling_f
 input_shape = input_shape(data_train, data_test, downscaling_factor=DOWNSCALING_FACTOR)
 
 if __name__ == '__main__':
+
     # this is the first train
     weights_file = './models/first_try.h5'
     json_file_name = "model.json"

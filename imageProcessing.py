@@ -60,15 +60,18 @@ DOWNSCALING_FACTOR = 0.2
 from keras.preprocessing.image import ImageDataGenerator
 
 datagen = ImageDataGenerator(
-        rotation_range=40,
-        width_shift_range=0.2,
+        rotation_range=180,
+        width_shift_range=0.1,
         height_shift_range=0.2,
         rescale=1./255,
         shear_range=0.2,
-        zoom_range=0.2,
+        zoom_range=[0.7, 1.3],
         horizontal_flip=True,
         channel_shift_range = 0.4,
-        fill_mode='nearest')
+        vertical_flip=True,
+        brightness_range = (25, 26),
+        fill_mode='constant',
+        cval = 20)
 
 TRAIN_FOLDER = 'image_train_folder'               # this is where the processed image goes
 TRAIN_AUG = 'image_train_augmented'
@@ -101,7 +104,7 @@ def image_augmentation_save(img, ParentDir, Prefix):
     for batch in datagen.flow(img, batch_size=1,
                              save_to_dir=ParentDir, save_prefix=Prefix, save_format='jpg'):
         i += 1
-        if i > 20:
+        if i > 1:
             break  # otherwise the generator would loop indefinitely
     return
 
@@ -243,6 +246,14 @@ def cleanPics(dir):
 
     return
 
-test_size = preprocessing(PARENT_FOLDER_NAME, SOURCE + DATA_SOURCE, TRAIN_FOLDER, TEST_FOLDER, DOWNSCALING_FACTOR, prob = TEST_PORTION, augmentation=True)
+#test_size = preprocessing(PARENT_FOLDER_NAME, SOURCE + DATA_SOURCE, TRAIN_FOLDER, TEST_FOLDER, DOWNSCALING_FACTOR, prob = TEST_PORTION, augmentation=True)
+def imageAlloc(augmented = True):
 
-# cleanAll()
+    cleanAll(augmented = False)
+    test_size = preprocessing(PARENT_FOLDER_NAME, SOURCE + DATA_SOURCE, TRAIN_FOLDER, TEST_FOLDER, DOWNSCALING_FACTOR, prob = TEST_PORTION, augmentation=False)
+
+    cleanAll(augmented = True)
+    test_size = preprocessing(PARENT_FOLDER_NAME, SOURCE + DATA_SOURCE, TRAIN_AUG, TEST_AUG, DOWNSCALING_FACTOR, prob = TEST_PORTION, augmentation= True)
+
+imageAlloc(augmented = True)
+imageAlloc(augmented = False)

@@ -4,16 +4,18 @@ import platform
 from constants import DOWNSCALING_FACTOR, TRAIN_FOLDER, TEST_FOLDER, ALL_FOLDER, PARENT_FOLDER_NAME, SOURCE, EPOCHS, BATCH_SIZE, learning_rate, NUM_CLASS, DATA_SOURCE, resolution, input_channel
 
 train_datagen = ImageDataGenerator(
-        rotation_range=40,
-        width_shift_range=0.2,
+        rotation_range=180,
+        width_shift_range=0.1,
         height_shift_range=0.2,
         rescale=1./255,
         shear_range=0.2,
-        zoom_range=0.2,
+        zoom_range=[0.7, 1.3],
         horizontal_flip=True,
-        vertical_flip=True,
         channel_shift_range = 0.4,
-        fill_mode='nearest')
+        vertical_flip=True,
+        brightness_range = (25, 26),
+        fill_mode='constant',
+        cval = 20)
 
 test_datagen = ImageDataGenerator(rescale=1./255)
 
@@ -37,14 +39,14 @@ def loadData(batch_size = BATCH_SIZE, down_scaling_factor =  DOWNSCALING_FACTOR,
     validation_generator = test_datagen.flow_from_directory(
             directory=source_dir + TEST_FOLDER,
             target_size=(row, col),
-            batch_size=batch_size,
+            batch_size=1,
             color_mode="rgb",
             class_mode='categorical')
 
     all_generator = test_datagen.flow_from_directory(
             directory=source_dir + ALL_FOLDER,
             target_size=(row, col),
-            batch_size=batch_size,
+            batch_size=1,
             color_mode="rgb",
             class_mode='categorical')
 

@@ -5,6 +5,17 @@ from ModelKeras import Conv2Dense2, handCNN
 # Hyper parameters
 learning_rate = 0.0001
 NUM_CLASS = 5
+def loadAndTest(data_test, weight_file, json_name = 'model.json'):
+    json_file = open(json_name, 'r')
+    loaded_model_json = json_file.read()
+    json_file.close()
+    loaded_model = model_from_json(loaded_model_json)
+    loaded_model.load_weights(weight_file)
+    print("Loaded model from disk")
+
+    # evaluate loaded model on test data
+    loaded_model.compile(loss=lossfunc, optimizer=optimizer, metrics=['accuracy'])
+    validation_step = len(data_test)
 
 def firstTrain(input_shape, data_train, data_test,  dir_name_weight, dir_json, epochs = 2, model = handCNN):
     # introducing the model

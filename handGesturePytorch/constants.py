@@ -1,4 +1,10 @@
 import platform
+import torch
+import torch.optim as optim
+import torch.nn as nn
+
+# Device configuration
+device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
 # this section defines constants
 DOWNSCALING_FACTOR = 0.2                          # this means the number of pixels are reduced to downscaling_factor ^ 2 time of its orginal value
@@ -22,6 +28,15 @@ else:
 
 # Hyper parameters
 EPOCHS = 7
-BATCH_SIZE = 15
+BATCH_SIZE = 10
 learning_rate = 0.0001
 NUM_CLASS = 5
+GROWTH_RATE = 15
+
+def optimizer(model, adam = True):
+    if adam:
+        theOptimizer = optim.Adam(model.parameters(), lr=learning_rate, betas=(0.99, 0.999), 
+                           eps=1e-08, weight_decay=0, amsgrad=True)
+    return theOptimizer
+
+loss_func = nn.CrossEntropyLoss()       # we are only using cross entropy loss for now, we would love to add Wasserstein distance into the loss function later on to smooth the update

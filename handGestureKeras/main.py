@@ -16,10 +16,10 @@ input_shape = input_shape(data_train, data_test, downscaling_factor=DOWNSCALING_
 if __name__ == '__main__':
 
     # this is the first train
-    weights_file = './models/first_try.h5'
+    weights_file = './models/best_try - Copy.h5'
     json_file_name = "model.json"
 
-    # model = firstTrain(input_shape, data_train, data_test, epochs = EPOCHS, model = handCNN, dir_name_weight = weights_file, dir_json = json_file_name)
+    # model = firstTrain(input_shape, data_train, data_test, epochs = EPOCHS, model = handCNN, dir_name_weight = weights_file, dir_json = json_file_name, model = handCNN)
 
-    model = loadAndTrain(data_train, data_test, weights_file, epoch = EPOCHS, json_name = json_file_name)
-    save_model_keras(model, dir_json = json_file_name, dir_name_weight = weights_file)
+    model = loadAndTrain(data_train, data_test, weights_file, epoch = 1, json_name = json_file_name)
+    # save_model_keras(model, dir_json = json_file_name, dir_name_weight = weights_file)

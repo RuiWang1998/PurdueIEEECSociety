@@ -13,7 +13,6 @@ train_datagen = ImageDataGenerator(
         horizontal_flip=True,
         channel_shift_range = 0.4,
         vertical_flip=True,
-        brightness_range = (25, 26),
         fill_mode='constant',
         cval = 20)
 
@@ -52,7 +51,7 @@ def loadData(batch_size = BATCH_SIZE, down_scaling_factor =  DOWNSCALING_FACTOR,
 
     return train_generator, validation_generator, all_generator
 
-def input_shape(train_data, test_data, downscaling_factor = DOWNSCALING_FACTOR):
+def input_shape(downscaling_factor = DOWNSCALING_FACTOR):
 
     row = int(resolution[0] * downscaling_factor)
     col = int(resolution[1] * downscaling_factor)

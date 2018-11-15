@@ -1,7 +1,18 @@
 import keras
-from keras.models import Sequential
-from keras.layers import Dense, Flatten, Conv2D, MaxPooling2D, BatchNormalization, Activation, Dropout, Input, merge
+from keras.models import Sequential, Model
+from keras.layers import Dense, Flatten, Conv2D, MaxPooling2D, BatchNormalization, Activation, Dropout, Input, merge, Dropout, Lambda, ELU, concatenate, GlobalAveragePooling2D, SeparableConv2D, Subtract, LeakyReLU
+from keras.activations import relu, softmax
+from keras.layers.convolutional import Conv2D
+from keras.layers.pooling import MaxPooling2D, AveragePooling2D
+from keras.optimizers import Adam, RMSprop, SGD
+from keras.regularizers import l2
+from keras import backend as K
+
 from constants import DROP_RATE
+from dataloader import input_shape
+from coupleMaker import contrastive_loss
+
+print(input_shape())
 
 # Creating the Model
 def Conv2Dense2(input_shape, num_category, lossfunc = keras.losses.categorical_crossentropy, optimizer = keras.optimizers.Adam(lr = 0.0001, beta_1=0.99, beta_2=0.999, epsilon=1e-8, amsgrad=True)):
@@ -52,42 +63,56 @@ def handCNN(input_shape, num_category, lossfunc = keras.losses.categorical_cross
 
     return handCNN
 
-def Dense():
+def single_layer(x, growth_rate, kernel_size, stride1, pool_size, stride2, i, activation = 'relu'):
+
+    x = BatchNormalization()(x)
+    x = Activation(activation)(x)
+    x = Conv2D(i * growth_rate, kernel_size=1, strides=1, padding='same')(x)
+
+    x = BatchNormalization()(x)
+    x = Activation(activation)(x)
+    x = Conv2D(filters=growth_rate, kernel_size = kernel_size, strides=stride1, padding='same')(x)
+
+    return x
+
+def denseBlock(x, growth_rate, kernel_sizes, stride1, stride2, activation = 'relu', layer_num = 3):
+
+    for i, kernel_size in enumerate(kernel_sizes):
+        x1 = single_layer(x, growth_rate, kernel_size = kernel_size, stride1 = 1,  pool_size = 3, stride2 = 1, i = i + 1, activation = 'relu')
+        if i != len(kernel_sizes) - 1:
+            x = concatenate([x1, x], axis=3)
+
+    return x1
+
+def transition_layer(x, growth_rate, pool_size = 2, strides = 2, activation = LeakyReLU(alpha = 0.3)):
     
-    inputs = Input(shape=in_shp)
-    x=Reshape([1]+in_shp)(inputs)
-    #conv 1
-    #x=ZeroPadding2D((0, 1))(x)
-    x=Conv2D(256, 1, 3, Activation = "sigmoid")(x)
-    x=Dropout(DROP_RATE)(x)
-    list_feat=[x]
+    x = Conv2D(growth_rate, kernel_size = 2, strides=1, padding='same')(x)
+    x = activation(x)
+    x = AveragePooling2D(pool_size = pool_size, strides = 2)(x)
 
-    #conv2
-    #x=ZeroPadding2D((0, 1))(x)
-    x=Conv2D(256, 2, 3, Activation = "sigmoid")(x)
-    x=Dropout(DROP_RATE)(x)
-    list_feat.append(x)
-    m1 = merge(list_feat, mode='concat', concat_axis=1)
+    return x
 
-    #conv 3
-    #x=ZeroPadding2D((0, 1))(x)
-    x=Conv2D(80, 1, 3, Activation = "sigmoid")(m1)
-    x=Dropout(DROP_RATE)(x)
-    list_feat.append(x)
-    m2=merge(list_feat, mode='concat', concat_axis=1)
+def handDenseNet(input_shapes = input_shape(), growth_rate = 10, num_category = 5, optimizer = keras.optimizers.Adam(lr = 0.0001, beta_1=0.99, beta_2=0.999, epsilon=1e-8, amsgrad=True), loss=contrastive_loss):
 
-    # conv 4
-    x=Conv2D(80, 1, 3, Activation= "sigmoid")(m2)
-    x=Dropout(DROP_RATE)(x)
-    list_feat.append(x)
-    m3=merge(list_feat, mode='concat', concat_axis=1)
+    img_input=Input(shape=input_shapes)
+    # this is the input layer
+    x = Conv2D(growth_rate, (2, 2), strides=(1, 1), padding='same')(img_input)
+    x = MaxPooling2D(pool_size=2, strides=1, padding='same')(x)
 
-    x=Flatten()(m3)
-    # Linear Layer 1
-    x=Dense(256, Activation='relu')(x)
-    x=Dropout(DROP_RATE)(x)
-    # Linear Layer 2
-    x=Dense(len(classes), init='he_normal', name="dense2" )(x)
-    model = Model(input=[inputs], output=[x])
+    x = denseBlock(x, growth_rate, kernel_sizes = (3, 3, 3), stride1 = 1, stride2 = 1, activation = 'relu', layer_num=3)
 
-    return model
+    x = transition_layer(x, growth_rate, pool_size = 2, strides = 2)
+
+    x = denseBlock(x, growth_rate, kernel_sizes = (3, 3, 3), stride1 = 1, stride2 = 1, activation = 'relu', layer_num=3)
+
+    x = transition_layer(x, growth_rate, pool_size = 2, strides = 2)
+
+    x = denseBlock(x, growth_rate, kernel_sizes = (3, 3, 3), stride1 = 1, stride2 = 1, activation = 'relu', layer_num=3)
+
+    x = Flatten()(x)
+    x = Dense(30, activation = 'relu')(x)
+    x = Dense(num_category, activation='softmax')(x)
+
+    net = Model(img_input, x)
+
+    return net

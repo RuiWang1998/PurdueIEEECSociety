@@ -248,12 +248,12 @@ def cleanPics(dir):
 
 #test_size = preprocessing(PARENT_FOLDER_NAME, SOURCE + DATA_SOURCE, TRAIN_FOLDER, TEST_FOLDER, DOWNSCALING_FACTOR, prob = TEST_PORTION, augmentation=True)
 def imageAlloc(augmented = True):
-
-    cleanAll(augmented = False)
-    test_size = preprocessing(PARENT_FOLDER_NAME, SOURCE + DATA_SOURCE, TRAIN_FOLDER, TEST_FOLDER, DOWNSCALING_FACTOR, prob = TEST_PORTION, augmentation=False)
-
-    cleanAll(augmented = True)
-    test_size = preprocessing(PARENT_FOLDER_NAME, SOURCE + DATA_SOURCE, TRAIN_AUG, TEST_AUG, DOWNSCALING_FACTOR, prob = TEST_PORTION, augmentation= True)
+    if augmented:
+        cleanAll(augmented = False)
+        test_size = preprocessing(PARENT_FOLDER_NAME, SOURCE + DATA_SOURCE, TRAIN_FOLDER, TEST_FOLDER, DOWNSCALING_FACTOR, prob = TEST_PORTION, augmentation=False)
+    else:
+        cleanAll(augmented = True)
+        test_size = preprocessing(PARENT_FOLDER_NAME, SOURCE + DATA_SOURCE, TRAIN_AUG, TEST_AUG, DOWNSCALING_FACTOR, prob = TEST_PORTION, augmentation= True)
 
 imageAlloc(augmented = True)
 imageAlloc(augmented = False)

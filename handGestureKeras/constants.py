@@ -22,8 +22,8 @@ else:
     SOURCE = SOURCE_WINDOWS + SECOND_SOURCE
 
 # Hyper parameters
-EPOCHS = 300
-BATCH_SIZE = 18
+EPOCHS = 100
+BATCH_SIZE = 30
 learning_rate = 0.0001
 NUM_CLASS = 5
 

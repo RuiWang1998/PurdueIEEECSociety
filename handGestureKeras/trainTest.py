@@ -1,6 +1,7 @@
 import keras
 from keras.models import model_from_json
 from ModelKeras import Conv2Dense2, handCNN
+from dataloader import input_shape
 
 # Hyper parameters
 learning_rate = 0.0001
@@ -14,36 +15,38 @@ def loadAndTest(data_test, weight_file, json_name = 'model.json'):
     print("Loaded model from disk")
 
     # evaluate loaded model on test data
-    loaded_model.compile(loss=lossfunc, optimizer=optimizer, metrics=['accuracy'])
+    loaded_model.compile(loss = keras.losses.categorical_crossentropy, optimizer = keras.optimizers.Adam(lr = 0.0001, beta_1=0.99, beta_2=0.999, epsilon=1e-8, amsgrad=True), metrics=['accuracy'])
     validation_step = len(data_test)
 
-def firstTrain(input_shape, data_train, data_test,  dir_name_weight, dir_json, epochs = 2, model = handCNN):
+    score = loaded_model.evaluate_generator(data_test, steps = validation_step)
+    print('Test loss:', score[0])
+    print('Test accuracy:', score[1])
+
+def firstTrain(input_shape, data_train, data_test, dir_name_weight, dir_json, epochs = 2, model = handCNN(input_shape(), NUM_CLASS)):
     # introducing the model
     # net1 = Conv2Dense2(input_shape, NUM_CLASS)
-    net1 = model(input_shape, NUM_CLASS)
 
     validation_step = len(data_test)
     train_step = len(data_train)
 
     # training
-    net1.fit_generator(
+    model.fit_generator(
             generator=data_train,
             steps_per_epoch = train_step,
             epochs=epochs,
             validation_data=data_test,
-            validation_steps=train_step,
+            validation_steps=validation_step,
             callbacks = [
-        keras.callbacks.ModelCheckpoint(dir_name_weight, monitor='val_loss', verbose=0, save_best_only=True, mode='auto'),
-        keras.callbacks.EarlyStopping(monitor='val_loss', patience=20, verbose=0, mode='auto')])
+        keras.callbacks.ModelCheckpoint(dir_name_weight, monitor='val_acc', verbose=0, save_best_only=True, mode='auto')])
 
-    score = net1.evaluate_generator(data_test)
+    score = model.evaluate_generator(data_test, steps = validation_step)
     print('Test loss:', score[0])
     print('Test accuracy:', score[1])
 
-    weights_file = './models/best_try.h5'
-    json_file_name = "model_best.json"
+    weights_file = dir_name_weight
+    json_file_name = dir_json
 
-    save_model_keras(net1, dir_json = json_file_name, dir_name_weight = dir_name_weight)
+    save_model_keras(model, dir_json = json_file_name, dir_name_weight = dir_name_weight)
 
     return net1
 
@@ -67,17 +70,16 @@ def loadAndTrain(data_train, data_test, weight_file, json_name = 'model.json', e
             steps_per_epoch = train_step,
             epochs=epoch,
             validation_data=data_test,
-            validation_steps=train_step,
+            validation_steps=validation_step,
             callbacks = [
-        keras.callbacks.ModelCheckpoint(weight_file, monitor='val_loss', verbose=0, save_best_only=True, mode='auto'),
-        keras.callbacks.EarlyStopping(monitor='val_loss', patience=20, verbose=0, mode='auto')])
+        keras.callbacks.ModelCheckpoint(weight_file, monitor='val_acc', verbose=0, save_best_only=True, mode='auto')])
 
-    score = loaded_model.evaluate_generator(data_test)
+    score = loaded_model.evaluate_generator(data_test, steps = validation_step)
     print('Test loss:', score[0])
     print('Test accuracy:', score[1])
 
-    weights_file = './models/best_try.h5'
-    json_file_name = "model_best.json"
+    weights_file = weight_file
+    json_file_name = json_name
 
     save_model_keras(loaded_model, dir_json = json_file_name, dir_name_weight = weights_file)
     

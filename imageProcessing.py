@@ -69,7 +69,6 @@ datagen = ImageDataGenerator(
         horizontal_flip=True,
         channel_shift_range = 0.4,
         vertical_flip=True,
-        brightness_range = (25, 26),
         fill_mode='constant',
         cval = 20)
 

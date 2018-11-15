@@ -36,19 +36,19 @@ def handCNN(input_shape, num_category, lossfunc = keras.losses.categorical_cross
     handCNN.add(Activation('relu'))
     handCNN.add(MaxPooling2D(pool_size=(3, 3), strides=(1, 1)))
 
-    # the first convolutional layer
+    # the second convolutional layer
     handCNN.add(Conv2D(32, kernel_size=(5, 5), input_shape=input_shape, strides=(1,1)))
     handCNN.add(BatchNormalization())
     handCNN.add(Activation('relu'))
     handCNN.add(MaxPooling2D(pool_size=(3, 3), strides=(2, 2)))
 
-    # the first convolutional layer
+    # the third convolutional layer
     handCNN.add(Conv2D(32, kernel_size=(6, 6), input_shape=input_shape, strides=(1,1)))
     handCNN.add(BatchNormalization())
     handCNN.add(Activation('relu'))
     handCNN.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
 
-    # the first convolutional layer
+    # the fourth convolutional layer
     handCNN.add(Conv2D(32, kernel_size=(9, 9), input_shape=input_shape, strides=(1,1)))
     handCNN.add(BatchNormalization())
     handCNN.add(Activation('relu'))
@@ -80,7 +80,7 @@ def denseBlock(x, growth_rate, kernel_sizes, stride1, stride2, activation = 'rel
     for i, kernel_size in enumerate(kernel_sizes):
         x1 = single_layer(x, growth_rate, kernel_size = kernel_size, stride1 = 1,  pool_size = 3, stride2 = 1, i = i + 1, activation = 'relu')
         if i != len(kernel_sizes) - 1:
-            x = concatenate([x1, x], axis=3)
+            x = concatenate([x1, x], axis=2)
 
     return x1
 
@@ -92,7 +92,7 @@ def transition_layer(x, growth_rate, pool_size = 2, strides = 2, activation = Le
 
     return x
 
-def handDenseNet(input_shapes = input_shape(), growth_rate = 10, num_category = 5, optimizer = keras.optimizers.Adam(lr = 0.0001, beta_1=0.99, beta_2=0.999, epsilon=1e-8, amsgrad=True), loss=contrastive_loss):
+def handDenseNet(input_shapes = input_shape(), growth_rate = 10, num_category = 5, optimizer = keras.optimizers.Adam(lr = 0.0001, beta_1=0.99, beta_2=0.999, epsilon=1e-8, amsgrad=True), loss=contrastive_loss, lastLinear = 30):
 
     img_input=Input(shape=input_shapes)
     # this is the input layer
@@ -110,7 +110,7 @@ def handDenseNet(input_shapes = input_shape(), growth_rate = 10, num_category = 
     x = denseBlock(x, growth_rate, kernel_sizes = (3, 3, 3), stride1 = 1, stride2 = 1, activation = 'relu', layer_num=3)
 
     x = Flatten()(x)
-    x = Dense(30, activation = 'relu')(x)
+    x = Dense(lastLinear, activation = 'relu')(x)
     x = Dense(num_category, activation='softmax')(x)
 
     net = Model(img_input, x)

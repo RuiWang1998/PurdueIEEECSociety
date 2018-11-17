@@ -67,52 +67,52 @@ def input_shape(downscaling_factor = DOWNSCALING_FACTOR):
 
     return input_shape
 
+input_shapes = input_shape()
+
 def generator(batch_size, train_folder):
   
-  while 1:
-    X=[]
-    y=[]
-    switch=True
-    for _ in range(batch_size):
-   #   switch += 1
-      if switch:
-     #   print("correct")
-        X.append(create_couple(train_folder).reshape((2,200,200,4)))
-        y.append(np.array([0.]))
-      else:
-     #   print("wrong")
-        X.append(create_wrong(train_folder).reshape((2,200,200,4)))
-        y.append(np.array([1.]))
-      switch=not switch
-    X = np.asarray(X)
-    y = np.asarray(y)
-    XX1=X[0,:]
-    XX2=X[1,:]
-    yield [X[:,0],X[:,1]],y
+    while 1:
+        X=[]
+        y=[]
+        switch=True
+        for _ in range(batch_size):
+        #   switch += 1
+            if switch:
+                #   print("correct")
+                X.append(create_couple(train_folder).reshape((2, input_shapes[0], input_shapes[1], input_shapes[2])))
+                y.append(np.array([0.]))
+            else:
+                #   print("wrong")
+                X.append(create_wrong(train_folder).reshape((2, input_shapes[0], input_shapes[1], input_shapes[2])))
+                y.append(np.array([1.]))
+            switch=not switch
+        X = np.asarray(X)
+        y = np.asarray(y)
+        #XX1=X[0,:]
+        #XX2=X[1,:]
+        yield [X[:,0],X[:,1]],y
 
-
-
-def val_generator(batch_size, train_folder):
+def val_generator(batch_size, test_folder):
   
-  while 1:
-    X=[]
-    y=[]
-    switch=True
-    for _ in range(batch_size):
-      if switch:
-        X.append(create_couple(train_folder).reshape((2,200,200,4)))
-        y.append(np.array([0.]))
-      else:
-        X.append(create_wrong(train_folder).reshape((2,200,200,4)))
-        y.append(np.array([1.]))
-      switch=not switch
-    X = np.asarray(X)
-    y = np.asarray(y)
-    XX1=X[0,:]
-    XX2=X[1,:]
-    yield [X[:,0],X[:,1]],y
+    while 1:
+        X=[]
+        y=[]
+        switch=True
+        for _ in range(batch_size):
+            if switch:
+                X.append(create_couple(test_folder).reshape((2, input_shapes[0], input_shapes[1], input_shapes[2])))
+                y.append(np.array([0.]))
+            else:
+                X.append(create_wrong(test_folder).reshape((2, input_shapes[0], input_shapes[1], input_shapes[2])))
+                y.append(np.array([1.]))
+            switch=not switch
+        X = np.asarray(X)
+        y = np.asarray(y)
+        #XX1=X[0,:]
+        #XX2=X[1,:]
+        yield [X[:,0],X[:,1]],y
 
-def create_input_rgbd(file_path):
+def create_input(file_path):
   #  print(folder)
     mat=np.zeros((480,640), dtype='float32')
     i=0

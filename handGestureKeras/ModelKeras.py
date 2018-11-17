@@ -12,8 +12,6 @@ from constants import DROP_RATE
 from dataloader import input_shape
 from coupleMaker import contrastive_loss
 
-print(input_shape())
-
 # Creating the Model
 def Conv2Dense2(input_shape, num_category, lossfunc = keras.losses.categorical_crossentropy, optimizer = keras.optimizers.Adam(lr = 0.0001, beta_1=0.99, beta_2=0.999, epsilon=1e-8, amsgrad=True)):
     Conv2Dense2 = Sequential()
@@ -46,7 +44,7 @@ def handCNN(input_shape, num_category, lossfunc = keras.losses.categorical_cross
     handCNN.add(Conv2D(32, kernel_size=(6, 6), input_shape=input_shape, strides=(1,1)))
     handCNN.add(BatchNormalization())
     handCNN.add(Activation('relu'))
-    handCNN.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
+    handCNN.add(MaxPooling2D(pool_size=(2, 2), strides=(1, 1))) # for recognition only, this one is 2
 
     # the fourth convolutional layer
     handCNN.add(Conv2D(32, kernel_size=(9, 9), input_shape=input_shape, strides=(1,1)))
@@ -92,7 +90,7 @@ def transition_layer(x, growth_rate, pool_size = 2, strides = 2, activation = Le
 
     return x
 
-def handDenseNet(input_shapes = input_shape(), growth_rate = 10, num_category = 5, optimizer = keras.optimizers.Adam(lr = 0.0001, beta_1=0.99, beta_2=0.999, epsilon=1e-8, amsgrad=True), loss=contrastive_loss, lastLinear = 30):
+def handDenseNet(input_shapes = input_shape(), growth_rate = 10, num_out = 5, optimizer = keras.optimizers.Adam(lr = 0.0001, beta_1=0.99, beta_2=0.999, epsilon=1e-8, amsgrad=True), loss=keras.losses.categorical_crossentropy, lastLinear = 30):
 
     img_input=Input(shape=input_shapes)
     # this is the input layer
@@ -111,7 +109,7 @@ def handDenseNet(input_shapes = input_shape(), growth_rate = 10, num_category = 
 
     x = Flatten()(x)
     x = Dense(lastLinear, activation = 'relu')(x)
-    x = Dense(num_category, activation='softmax')(x)
+    x = Dense(num_out, activation='softmax')(x)
 
     net = Model(img_input, x)
 

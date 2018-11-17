@@ -52,7 +52,6 @@ from skimage import color
 from skimage.transform import rescale, resize
 import time
 import random
-import platform
 import os, shutil
 
 DOWNSCALING_FACTOR = 0.2
@@ -72,26 +71,7 @@ datagen = ImageDataGenerator(
         fill_mode='constant',
         cval = 20)
 
-TRAIN_FOLDER = 'image_train_folder'               # this is where the processed image goes
-TRAIN_AUG = 'image_train_augmented'
-TEST_FOLDER = 'image_test_folder'
-TEST_AUG = 'image_test_augmented'
-ALL_FOLDER = 'image_folder_rescaled'
-PARENT_FOLDER_NAME = 'image_folder'               # this is the parent folder 
-SOURCE_WINDOWS = 'C:/'
-SOURCE_LINUX = '/mnt/c/'
-SECOND_SOURCE = 'Users/Rui/Documents/GitHub/PurdueIEEECSociety/handGesturePytorch/'
-DATA_SOURCE = '../../PurdueIEEEdata/'
-IMAGE_DIR = './curves/'
-random.seed(2)
-NUM_CLASS = 5
-TEST_PORTION = 0.8
-
-# this needs to change if the platform is changed
-if platform.system() == 'Linux':
-    SOURCE = SOURCE_LINUX + SECOND_SOURCE
-else:
-    SOURCE = SOURCE_WINDOWS + SECOND_SOURCE
+from constants import DOWNSCALING_FACTOR, TRAIN_FOLDER, TEST_FOLDER, ALL_FOLDER, PARENT_FOLDER_NAME, SOURCE, EPOCHS, DATA_SOURCE, IMAGE_DIR, TEST_PORTION, SOURCE, TEST_AUG, TEST_FOLDER, TRAIN_AUG, TRAIN_FOLDER
 
 def image_augmentation_save(img, ParentDir, Prefix):
     # the input should be a Numpy array
@@ -103,7 +83,7 @@ def image_augmentation_save(img, ParentDir, Prefix):
     for batch in datagen.flow(img, batch_size=1,
                              save_to_dir=ParentDir, save_prefix=Prefix, save_format='jpg'):
         i += 1
-        if i > 1:
+        if i > 2:
             break  # otherwise the generator would loop indefinitely
     return
 
@@ -111,7 +91,7 @@ def load_images_downscale(folder_name, factor):
     # this function takes the file name and read it
     images = []
     for filename in glob.glob(folder_name + '/*.jpg'):
-        images.append(process_image(img.imread(filename), factor = factor))
+        images.append(process_image(img.imread(filename), factor = factor, action = 'rescale'))
 
     return images
 
@@ -123,7 +103,7 @@ def load_images(folder_name):
 
     return images
 
-def process_image(image, action = "downscale", factor = 0.5):
+def process_image(image, action = "resize", factor = 0.5):
     # this function provide three options manipulating images
     # this function also performs normalization
     
@@ -131,7 +111,7 @@ def process_image(image, action = "downscale", factor = 0.5):
     if action == "rescale":
         image = rescale(image, 1.0 / factor, anti_aliasing=False)
     if action == "resize":
-        image= resize(image, (image.shape[0] / factors, image.shape[1] / factor), anti_aliasing=True)
+        image= resize(image, (image.shape[0] * factor, image.shape[1] * factor), anti_aliasing=True)
     if action == "downscale":
         image = rescale(image, factor)
         
@@ -191,7 +171,6 @@ def preprocessing(parent_folder_name, source_dir, train_folder, test_folder, fac
             else:
                 folder = train_folder
             
-            loca = source_dir + folder + "/" + str(l) + "/" + str(k) + ".jpg"
             # some data (512x512)
             data = j
             # a colormap and a normalization instance
@@ -201,6 +180,7 @@ def preprocessing(parent_folder_name, source_dir, train_folder, test_folder, fac
             if augmentation == True:
                 image_augmentation_save(image, source_dir+folder+"/"+str(l)+"/", 'aug')
             else:
+                loca = source_dir + folder + "/" + str(l) + "/" + str(k) + ".jpg"
                 plt.imsave(loca, image)
             k += 1
         l += 1
@@ -247,12 +227,11 @@ def cleanPics(dir):
 
 #test_size = preprocessing(PARENT_FOLDER_NAME, SOURCE + DATA_SOURCE, TRAIN_FOLDER, TEST_FOLDER, DOWNSCALING_FACTOR, prob = TEST_PORTION, augmentation=True)
 def imageAlloc(augmented = True):
-    if augmented:
-        cleanAll(augmented = False)
-        test_size = preprocessing(PARENT_FOLDER_NAME, SOURCE + DATA_SOURCE, TRAIN_FOLDER, TEST_FOLDER, DOWNSCALING_FACTOR, prob = TEST_PORTION, augmentation=False)
+    cleanAll(augmented = augmented)
+    if augmented == False:
+        test_size = preprocessing(PARENT_FOLDER_NAME, SOURCE + DATA_SOURCE, TRAIN_FOLDER, TEST_FOLDER, DOWNSCALING_FACTOR, prob = TEST_PORTION, augmentation=augmented)
     else:
-        cleanAll(augmented = True)
-        test_size = preprocessing(PARENT_FOLDER_NAME, SOURCE + DATA_SOURCE, TRAIN_AUG, TEST_AUG, DOWNSCALING_FACTOR, prob = TEST_PORTION, augmentation= True)
+        test_size = preprocessing(PARENT_FOLDER_NAME, SOURCE + DATA_SOURCE, TRAIN_AUG, TEST_AUG, DOWNSCALING_FACTOR, prob = TEST_PORTION, augmentation=augmented)
 
-imageAlloc(augmented = True)
-imageAlloc(augmented = False)
+# imageAlloc(augmented = True)
+# imageAlloc(augmented = False)

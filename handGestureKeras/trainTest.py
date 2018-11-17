@@ -41,18 +41,18 @@ def firstTrain(input_shape, data_train, data_test, dir_name_weight, dir_json, ep
     # introducing the model
     # net1 = Conv2Dense2(input_shape, NUM_CLASS)
 
-    validation_step = len(data_test)
-    train_step = len(data_train)
+    # validation_step = len(data_test)
+    # train_step = len(data_train)
 
     # training
     history = model.fit_generator(
             generator=data_train,
-            steps_per_epoch = train_step,
+            steps_per_epoch = 40,
             epochs=epochs,
             validation_data=data_test,
-            validation_steps=validation_step,
+            validation_steps=10,
             callbacks = [
-        keras.callbacks.ModelCheckpoint(dir_name_weight, monitor='val_acc', verbose=0, save_best_only=True, mode='auto')])
+        keras.callbacks.ModelCheckpoint(dir_name_weight, monitor='val_loss', verbose=0, save_best_only=True, mode='auto')])
 
     # visualizing losses and accuracy
     displayHistory(history, epochs)
@@ -90,7 +90,7 @@ def loadAndTrain(data_train, data_test, weight_file, json_name = 'model.json', e
             validation_data=data_test,
             validation_steps=validation_step,
             callbacks = [
-        keras.callbacks.ModelCheckpoint(weight_file, monitor='val_acc', verbose=0, save_best_only=True, mode='auto')])
+        keras.callbacks.ModelCheckpoint(weight_file, monitor='val_loss', verbose=0, save_best_only=True, mode='auto')])
 
     # visualize training history
     displayHistory(history, epoch)

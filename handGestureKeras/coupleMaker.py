@@ -3,109 +3,59 @@ import numpy as np
 import numpy as np
 import glob
 import matplotlib.pyplot as plt
+import matplotlib.image as img
 from PIL import Image
 from constants import DOWNSCALING_FACTOR, resolution
 from keras import backend as K
+from imageProcessing import process_image
+
 
 def create_couple(file_path):
-    folder=np.random.choice(glob.glob(file_path + "*"))
+    folder=np.random.choice(glob.glob(file_path + "/*"))
     while folder == "datalab":
-      folder=np.random.choice(glob.glob(file_path + "*"))
+      folder=np.random.choice(glob.glob(file_path + "/*"))
   #  print(folder)
-    mat=np.zeros((resolution[0] * DOWNSCALING_FACTOR, resolution[1] * DOWNSCALING_FACTOR), dtype='float32')
-    i=0
-    j=0
-    depth_file = np.random.choice(glob.glob(folder + "/*.dat"))
-    with open(depth_file) as file:
-        for line in file:
-            vals = line.split('\t')
-            for val in vals:
-                if val == "\n": continue 
-                if int(val) > 1200 or int(val) == -1: val= 1200
-                mat[i][j]=float(int(val))
-                j+=1
-                j=j%resolution[1] * DOWNSCALING_FACTOR
+    photo_file = np.random.choice(glob.glob(folder + "/*.jpg"))
+    mat1 = np.asarray(process_image(img.imread(photo_file), factor = DOWNSCALING_FACTOR * 5))
+    mat1=(mat1-np.mean(mat1))/np.max(mat1)
+    plt.imshow(mat1)
+    plt.show()
 
-            i+=1
-        mat = np.asarray(mat)
-    mat=(mat-np.mean(mat))/np.max(mat)
-#    plt.imshow(mat)
-#    plt.show()
-    
-    mat2=np.zeros((resolution[0] * DOWNSCALING_FACTOR, resolution[1] * DOWNSCALING_FACTOR), dtype='float32')
-    i=0
-    j=0
-    depth_file = np.random.choice(glob.glob(folder + "/*.dat"))
-    with open(depth_file) as file:
-        for line in file:
-            vals = line.split('\t')
-            for val in vals:
-                if val == "\n": continue 
-                if int(val) > 1200 or int(val) == -1: val= 1200
-                mat2[i][j]=float(int(val))
-                j+=1
-                j=j%resolution[1] * DOWNSCALING_FACTOR
-
-            i+=1
-        mat2 = np.asarray(mat2)
+    photo_file = np.random.choice(glob.glob(folder + "/*.jpg"))
+    mat2 = np.asarray(process_image(img.imread(photo_file), factor = DOWNSCALING_FACTOR * 5))
     mat2=(mat2-np.mean(mat2))/np.max(mat2)
-#    plt.imshow(mat2)
-#    plt.show()
-    return np.array([mat, mat2])
+    plt.imshow(mat2)
+    plt.show()
+    return np.array([mat1, mat2])
 
 def create_wrong(file_path):
-    folder=np.random.choice(glob.glob(file_path + "*"))
+    folder=np.random.choice(glob.glob(file_path + "/*"))
     while folder == "datalab":
-      folder=np.random.choice(glob.glob(file_path + "*"))    
-    mat=np.zeros((resolution[0] * DOWNSCALING_FACTOR, resolution[1] * DOWNSCALING_FACTOR), dtype='float32')
-    i=0
-    j=0
-    depth_file = np.random.choice(glob.glob(folder + "/*.dat"))
-    with open(depth_file) as file:
-        for line in file:
-            vals = line.split('\t')
-            for val in vals:
-                if val == "\n": continue 
-                if int(val) > 1200 or int(val) == -1: val= 1200
-                mat[i][j]=float(int(val))
-                j+=1
-                j=j%resolution[1] * DOWNSCALING_FACTOR
-
-            i+=1
-        mat = np.asarray(mat)
-    mat=(mat-np.mean(mat))/np.max(mat)
- #   plt.imshow(mat)
- #   plt.show()
+      folder=np.random.choice(glob.glob(file_path + "/*"))    
+    photo_file = np.random.choice(glob.glob(folder + "/*.jpg"))
+    mat1 = np.asarray(process_image(img.imread(photo_file), factor = DOWNSCALING_FACTOR * 5))
+    mat1=(mat1-np.mean(mat1))/np.max(mat1)
+    plt.imshow(mat1)
+    plt.show()
     
-
-    folder2=np.random.choice(glob.glob(file_path + "*"))
+    folder2=np.random.choice(glob.glob(file_path + "/*"))
     while folder==folder2 or folder2=="datalab": #it activates if it chose the same folder
-        folder2=np.random.choice(glob.glob(file_path + "*"))
-    mat2=np.zeros((resolution[0] * DOWNSCALING_FACTOR, resolution[1] * DOWNSCALING_FACTOR), dtype='float32')
-    i=0
-    j=0
-    depth_file = np.random.choice(glob.glob(folder2 + "/*.dat"))
-    with open(depth_file) as file:
-        for line in file:
-            vals = line.split('\t')
-            for val in vals:
-                if val == "\n": continue
-                if int(val) > 1200 or int(val) == -1: val= 1200
-                mat2[i][j]=float(int(val))
-                j+=1
-                j=j%resolution[1] * DOWNSCALING_FACTOR
-
-            i+=1
-        mat2 = np.asarray(mat2)
+        folder2=np.random.choice(glob.glob(file_path + "/*"))
+    photo_file = np.random.choice(glob.glob(folder2 + "/*.jpg"))
+    mat2 = np.asarray(process_image(img.imread(photo_file), factor = DOWNSCALING_FACTOR * 5))
     mat2=(mat2-np.mean(mat2))/np.max(mat2)
- #   plt.imshow(mat2)
- #   plt.show()
+    plt.imshow(mat2)
+    plt.show()
   
-    
-    return np.array([mat, mat2])
+    return np.array([mat1, mat2])
 
 def euclidean_distance(inputs):
     assert len(inputs) == 2, \
         'Euclidean distance needs 2 inputs, %d given' % len(inputs)
     u, v = inputs
-    return K.sqrt(K.sum((K.square(u - v)), axis=1, keepdims=True))
+    return K.sum((K.square(u - v)), axis=1, keepdims=True)
+
+def contrastive_loss(y_true,y_pred):
+    margin=1.
+    # return K.mean( K.square(y_pred) )
+    return K.mean((1. - y_true) * K.square(y_pred) + y_true * K.square(K.maximum(margin - y_pred, 0.)))

@@ -5,7 +5,7 @@ import time
 import torch.onnx
 
 from dataloader import train_loader, test_loader, all_loader
-from constants import EPOCHS, optimizer, device, loss_func
+from constants import EPOCHS, optimizer, device, loss_func, SOURCE
 
 def train(model, device, train_loader, loss_func = loss_func, epoch = EPOCHS):
     model.train()
@@ -17,7 +17,7 @@ def train(model, device, train_loader, loss_func = loss_func, epoch = EPOCHS):
         loss = loss_func(output, target)
         loss.backward()
         optim.step()
-        if batch_idx % 100 == 0:
+        if batch_idx % 10 == 0:
             print('Train Epoch: {} [{}/{} ({:.0f}%)] Loss: {:.6f}'.format(
                 epoch, batch_idx * len(data), len(train_loader.dataset),
                 100. * batch_idx / len(train_loader), loss.item()))
@@ -75,10 +75,13 @@ def firstTrain(net, output_dir, output_file, epochs = EPOCHS):
     # training
     train_accuracy_plot[0], test_accuracy_plot[0] = test(net, device, test_loader, loss_func, train_loader, best_accuracy)
     print("start training")
+    time_step = time.time()
     for epoch in range(epochs):
         t_plot[epoch + 1] = epoch
         train(net, device, train_loader, loss_func, epoch)
         train_accuracy_plot[epoch + 1], test_accuracy_plot[epoch + 1] = test(net, device, test_loader, loss_func, train_loader)
+        print("Epoch: {} time elapsed {} s".format(epoch, time.time()-time_step))
+        time_step = time.time()
 
         if test_accuracy_plot[epoch + 1] >= best_accuracy:
             best_accuracy = test_accuracy_plot[epoch]
@@ -93,7 +96,8 @@ def firstTrain(net, output_dir, output_file, epochs = EPOCHS):
     plt.ylabel('The accuracy of test and training sets over epochs')
     plt.xlabel('Epochs')
     plt.legend(['training set','test set'])
-    plt.savefig(IMAGE_DIR + str(int(best_correct/100)) + '_' + str(test_volume) + '_' + str(round(best_accuracy)) + '_' + '.png')
+    plt.savefig(SOURCE + str(int(best_correct/100)) + '_' + str(test_volume) + '_' + str(round(best_accuracy)) + '_' + '.png')
+    plt.gcf().clear()
 
 def loadAndTrain(model, dir, epoch = EPOCHS, index = 1, best_accuracy = 90):
     net = torch.load(dir + model)

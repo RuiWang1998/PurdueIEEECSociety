@@ -9,33 +9,7 @@ import time
 import random
 import os, shutil
 
-from keras.preprocessing.image import ImageDataGenerator
-
-datagen = ImageDataGenerator(
-        rotation_range=180,
-        width_shift_range=0.1,
-        height_shift_range=0.2,
-        rescale=1./255,
-        shear_range=0.2,
-        zoom_range=[0.7, 1.3],
-        horizontal_flip=True,
-        vertical_flip=True)
-
 from constants import DOWNSCALING_FACTOR, TRAIN_FOLDER, TEST_FOLDER, ALL_FOLDER, PARENT_FOLDER_NAME, SOURCE, EPOCHS, DATA_SOURCE, IMAGE_DIR, TEST_PORTION, SOURCE, TEST_AUG, TEST_FOLDER, TRAIN_AUG, TRAIN_FOLDER
-
-def image_augmentation_save(img, ParentDir, Prefix):
-    # the input should be a Numpy array
-    img = img.reshape((1,) + img.shape)  # this is a Numpy array with shape (1, 3, 150, 150)
-
-    # the .flow() command below generates batches of randomly transformed images
-    # and saves the results to the `preview/` directory
-    i = 0
-    for batch in datagen.flow(img, batch_size=1,
-                             save_to_dir=ParentDir, save_prefix=Prefix, save_format='jpg'):
-        i += 1
-        if i > 4:
-            break  # otherwise the generator would loop indefinitely
-    return
 
 def load_images_downscale(folder_name, factor):
     # this function takes the file name and read it
@@ -127,38 +101,24 @@ def preprocessing(parent_folder_name, source_dir, train_folder, test_folder, fac
             cmap = plt.cm.gray
             norm = plt.Normalize(vmin=data.min(), vmax=data.max())
             image = norm(data)
-            if augmentation == True:
-                image_augmentation_save(image, source_dir+folder+"/"+str(l)+"/", 'aug')
-            else:
-                loca = source_dir + folder + "/" + str(l) + "/" + str(k) + ".jpg"
-                plt.imsave(loca, image)
+            loca = source_dir + folder + "/" + str(l) + "/" + str(k) + ".jpg"
+            plt.imsave(loca, image)
             k += 1
         l += 1
     print("The time used for writing image was {0:.2f} seconds.".format(time.time() - start))
 
     return test_size
 
-def cleanAll(augmented = False):
+def cleanAll():
 
-    if augmented == False:
-        for folderName in glob.glob(SOURCE+DATA_SOURCE+TRAIN_FOLDER + '/*'):
-                if folderName != 'image_folder/desktop.ini' and folderName != 'image_folder\desktop.ini':
-                    #print("Start loading the folder: " + folderName)
-                    cleanPics(folderName + '/')
-        for folderName in glob.glob(SOURCE+DATA_SOURCE+TEST_FOLDER + '/*'):
-                if folderName != 'image_folder/desktop.ini' and folderName != 'image_folder\desktop.ini':
-                    #print("Start loading the folder: " + folderName)
-                    cleanPics(folderName + '/')
-
-    else:
-        for folderName in glob.glob(SOURCE+DATA_SOURCE+TRAIN_AUG + '/*'):
-                if folderName != 'image_folder/desktop.ini' and folderName != 'image_folder\desktop.ini':
-                    #print("Start loading the folder: " + folderName)
-                    cleanPics(folderName + '/')
-        for folderName in glob.glob(SOURCE+DATA_SOURCE+TEST_AUG + '/*'):
-                if folderName != 'image_folder/desktop.ini' and folderName != 'image_folder\desktop.ini':
-                    #print("Start loading the folder: " + folderName)
-                    cleanPics(folderName + '/')
+    for folderName in glob.glob(SOURCE+DATA_SOURCE+TRAIN_FOLDER + '/*'):
+        if folderName != 'image_folder/desktop.ini' and folderName != 'image_folder\desktop.ini':
+               #print("Start loading the folder: " + folderName)
+            cleanPics(folderName + '/')
+    for folderName in glob.glob(SOURCE+DATA_SOURCE+TEST_FOLDER + '/*'):
+        if folderName != 'image_folder/desktop.ini' and folderName != 'image_folder\desktop.ini':
+            #print("Start loading the folder: " + folderName)
+            cleanPics(folderName + '/')
 
     return
 
@@ -176,12 +136,9 @@ def cleanPics(dir):
     return
 
 #test_size = preprocessing(PARENT_FOLDER_NAME, SOURCE + DATA_SOURCE, TRAIN_FOLDER, TEST_FOLDER, DOWNSCALING_FACTOR, prob = TEST_PORTION, augmentation=True)
-def imageAlloc(augmented = True):
-    cleanAll(augmented = augmented)
-    if augmented == False:
-        test_size = preprocessing(PARENT_FOLDER_NAME, SOURCE + DATA_SOURCE, TRAIN_FOLDER, TEST_FOLDER, DOWNSCALING_FACTOR, prob = TEST_PORTION, augmentation=augmented)
-    else:
-        test_size = preprocessing(PARENT_FOLDER_NAME, SOURCE + DATA_SOURCE, TRAIN_AUG, TEST_AUG, DOWNSCALING_FACTOR, prob = TEST_PORTION, augmentation=augmented)
+def imageAlloc():
+    cleanAll()
+    test_size = preprocessing(PARENT_FOLDER_NAME, SOURCE + DATA_SOURCE, TRAIN_FOLDER, TEST_FOLDER, DOWNSCALING_FACTOR, prob = TEST_PORTION, augmentation=augmented)
 
 # imageAlloc(augmented = True)
 # imageAlloc(augmented = False)

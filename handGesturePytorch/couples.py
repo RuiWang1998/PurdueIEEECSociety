@@ -1,13 +1,11 @@
-# this code is from https://github.com/normandipalo/faceID_beta/blob/master/faceid_beta.ipynb with a few modifications
 import numpy as np
+import torch
 import glob
+import random
+from imageProcessing import process_image
 import matplotlib.pyplot as plt
 import matplotlib.image as img
-from PIL import Image
 from constants import DOWNSCALING_FACTOR, resolution
-from keras import backend as K
-from imageProcessing import process_image
-
 
 def create_couple(file_path):
     folder=np.random.choice(glob.glob(file_path + "/*"))
@@ -19,7 +17,9 @@ def create_couple(file_path):
     #plt.imshow(mat1)
     #plt.show()
 
-    photo_file = np.random.choice(glob.glob(folder + "/*.jpg"))
+    photo_file2 = np.random.choice(glob.glob(folder + "/*.jpg"))
+    while photo_file2 == photo_file:
+        photo_file2 = np.random.choice(glob.glob(folder + "/*.jpg"))
     mat2 = np.asarray(process_image(img.imread(photo_file), factor = DOWNSCALING_FACTOR * 5))
     #plt.imshow(mat2)
     #plt.show()
@@ -44,13 +44,15 @@ def create_wrong(file_path):
   
     return np.array([mat1, mat2])
 
-def euclidean_distance(inputs):
-    assert len(inputs) == 2, \
-        'Euclidean distance needs 2 inputs, %d given' % len(inputs)
-    u, v = inputs
-    return K.sum((K.square(u - v)), axis=1, keepdims=True)
+def create_couple_batch(batch_size, file_path, prob = 0.5):
+    couple = []
+    label = []
+    for _ in range(batch_size):
+        if random.uniform(0,1) > 0.5:
+            couple.append(create_couple(file_path))
+            label.append(0)
+        else:
+            couple.append(create_wrong(file_path))
+            label.append(1)
 
-def contrastive_loss(y_true,y_pred):
-    margin=1.
-    # return K.mean( K.square(y_pred) )
-    return K.mean((1. - y_true) * K.square(y_pred) + y_true * K.square(K.maximum(margin - y_pred, 0.)))
+    return torch.tensor(np.asarray(couple)), torch.tensor(label)

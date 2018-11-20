@@ -6,8 +6,8 @@ from constants import DOWNSCALING_FACTOR, EPOCHS, learning_rate, NUM_CLASS, GROW
 print(device)
 
 ### introducing the model
-# net = handCNNDense(num_class = NUM_CLASS, factor = DOWNSCALING_FACTOR, k = GROWTH_RATE).to(device)
-net = handCNN(num_class=100).to(device)
+net = handCNNDense(num_class = NUM_CLASS, factor = DOWNSCALING_FACTOR, k = GROWTH_RATE).to(device)
+# net = handCNN(num_class=100).to(device)
 
 if __name__ == '__main__':
     model_name = 'modelDense3Block'

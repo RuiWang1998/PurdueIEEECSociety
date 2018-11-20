@@ -20,21 +20,23 @@ def create_input(file):
     
     return mat1
 
-def get_outputs(model, train_source = visual_source, dim = 128):
+def get_outputs(model, train_source = visual_source, dim = 100):
     model.eval()
     with torch.no_grad():
         outputs=[]
+        average=[]
         for folder in glob.glob(train_source + "/*"):
-            i=0
+            avg = []
             for file in glob.glob(folder + '/*.jpg'):
-                i+=1
                 inputs = torch.tensor(create_input(file), dtype=torch.float).transpose(0, 2).transpose(1, 2).reshape(1, input_shapes[0], input_shapes[1], input_shapes[2])
-                outputs.append(model(inputs).numpy())
-                #print(i)
-        #    print("folder ", n, " of ", len(glob.glob('faceid_train/*')))
-        #print(len(outputs))
+                output = model(inputs).numpy()
+                outputs.append(output)
+                avg.append(output)
+                print
+            mean = np.mean(np.asarray(avg), axis=0)
+            average.append(mean)
         outputs = np.asarray(outputs)
-    return outputs.reshape((-1,100))
+    return outputs.reshape((-1,dim)), np.asarray(average)
 
 def PCA_image(X_embedded, name):
     color = 0
@@ -57,3 +59,22 @@ def PCA_out(outputs):
     X_embedded = TSNE(2).fit_transform(X_PCA)
 
     return X_embedded
+
+def save_mean(mean, model_name, dim = 100, num_class = 5):
+    '''
+    This function saves the mean into a csv file
+    '''
+
+    a = np.asarray(mean)
+    np.savetxt("./means/" + str(model_name) + ".csv", a[:,0,:], delimiter=",")
+
+    return
+
+def load_mean(model_name):
+    '''
+    This function loads the mean from a csv file
+    '''
+
+    mean = np.loadtxt(open("./means/" + str(model_name) + ".csv", "r"), delimiter=",", skiprows=0)
+
+    return mean

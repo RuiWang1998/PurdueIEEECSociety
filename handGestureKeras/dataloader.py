@@ -15,9 +15,7 @@ train_datagen = ImageDataGenerator(
         zoom_range=[0.7, 1.3],
         horizontal_flip=True,
         channel_shift_range = 0.4,
-        vertical_flip=True,
-        fill_mode='constant',
-        cval = 20)
+        vertical_flip=True)
 
 test_datagen = ImageDataGenerator(rescale=1./255)
 

@@ -7,7 +7,7 @@ from keras import backend as K
 
 from ModelKeras import Conv2Dense2, handCNN, handDenseNet
 from dataloader import loadData, input_shape
-from trainTest import save_model_keras, firstTrain, loadAndTrain, loadAndTest, history
+from trainTest import save_model_keras, firstTrain, loadAndTrain, loadAndTest
 from constants import DOWNSCALING_FACTOR, TRAIN_FOLDER, TEST_FOLDER, ALL_FOLDER, PARENT_FOLDER_NAME, SOURCE, EPOCHS, BATCH_SIZE, learning_rate, NUM_CLASS, DATA_SOURCE, DROP_RATE, GROWTH_RATE
 
 # Loading data from directories

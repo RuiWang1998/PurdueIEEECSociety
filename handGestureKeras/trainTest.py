@@ -8,28 +8,32 @@ from constants import SOURCE
 # Hyper parameters
 learning_rate = 0.0001
 NUM_CLASS = 5
-def displayHistory(history, epochs):
+#def displayHistory(history, epochs):
     
-    train_loss = history.history['loss']
-    val_loss   = history.history['val_loss']
-    train_acc  = history.history['acc']
-    val_acc    = history.history['val_acc']
-    xc         = range(epochs)
+#    train_loss = history.history['loss']
+#    val_loss   = history.history['val_loss']
+#    train_acc  = history.history['acc']
+#    val_acc    = history.history['val_acc']
+#    xc         = range(epochs)
 
-    plt.figure()
-    plt.plot(xc, train_loss)
-    plt.plot(xc, val_loss)
-    plt.savefig(SOURCE + "/model" + '.png')
+#    plt.figure()
+#    plt.plot(xc, train_loss)
+#    plt.plot(xc, val_loss)
+#    plt.savefig(SOURCE + "/model" + '.png')
 
-    return
+#    return
 
 def loadAndTest(data_test, weight_file, json_name = 'model.json'):
-    json_file = open(json_name, 'r')
-    loaded_model_json = json_file.read()
-    json_file.close()
-    loaded_model = model_from_json(loaded_model_json)
-    loaded_model.load_weights(weight_file)
-    print("Loaded model from disk")
+
+    '''
+    This function loads the model and test it on the test set specified by data_set
+
+    data_set:       the data set on which the model is tested on 
+    weight_file:    the weight file to load into the data
+    json_name:      the json file specifies the model structure
+
+    '''
+    loaded_model = load_model_keras(json_name, weight_file)
 
     # evaluate loaded model on test data
     loaded_model.compile(loss = keras.losses.categorical_crossentropy, optimizer = keras.optimizers.Adam(lr = 0.0001, beta_1=0.99, beta_2=0.999, epsilon=1e-8, amsgrad=True), metrics=['accuracy'])
@@ -40,8 +44,17 @@ def loadAndTest(data_test, weight_file, json_name = 'model.json'):
     print('Test accuracy:', score[1])
 
 def firstTrain(input_shape, data_train, data_test, dir_name_weight, dir_json, epochs = 2, model = handCNN()):
-    # introducing the model
-    # net1 = Conv2Dense2(input_shape, NUM_CLASS)
+
+    '''
+    This function initiates the first training procedure with the datasets specifed as the training set and validation set and then saves the best weights file [The saving procedure needs to be further developed]
+
+    input_shape:        a three-dimension tuple that specifies the input shape
+    data_train:         The data set on which the model will be trained on
+    data_test:          The data set on which the validation is done
+    dir_name_weight:    The directory and the filename to which the model's weight will be saved
+    dir_json:           The directory and filename to which the json file of the model's structure will be saved
+
+    '''
 
     validation_step = len(data_test)
     train_step = len(data_train)
@@ -57,7 +70,7 @@ def firstTrain(input_shape, data_train, data_test, dir_name_weight, dir_json, ep
         keras.callbacks.ModelCheckpoint(dir_name_weight, monitor='val_acc', verbose=0, save_best_only=True, mode='auto')])
 
     # visualizing losses and accuracy
-    displayHistory(history, epochs)
+    # displayHistory(history, epochs)
 
     score = model.evaluate_generator(data_test, steps = validation_step)
     print('Test loss:', score[0])
@@ -71,12 +84,21 @@ def firstTrain(input_shape, data_train, data_test, dir_name_weight, dir_json, ep
     return model
 
 def loadAndTrain(data_train, data_test, weight_file, json_name = 'model.json', epoch = 1, lossfunc = keras.losses.categorical_crossentropy, optimizer = keras.optimizers.Adam(lr = 0.0001, beta_1=0.99, beta_2=0.999, epsilon=1e-8, amsgrad=True)):
-    json_file = open(json_name, 'r')
-    loaded_model_json = json_file.read()
-    json_file.close()
-    loaded_model = model_from_json(loaded_model_json)
-    loaded_model.load_weights(weight_file)
-    print("Loaded model from disk")
+
+    '''
+    This function loads the model and train with desired epochs and save the best result
+
+    data_train:         The dataset on which the traininig takes place
+    data_test:          The set of data on which validation will be processed
+    weight_file:        The weight file from and to which the model will be loaded and saved
+    json_name:          The Json file that saves the model's structure
+    epoch:              The number of epoch to train
+    lossfunc:           The loss function on which the model will be trained on
+    optimizer:          The optimizing method used to train the model
+
+    This function returns the model trained
+    '''
+    loaded_model = load_model_keras(json_name, weight_file)
  
     # evaluate loaded model on test data
     loaded_model.compile(loss=lossfunc, optimizer=optimizer, metrics=['accuracy'])
@@ -95,7 +117,7 @@ def loadAndTrain(data_train, data_test, weight_file, json_name = 'model.json', e
         keras.callbacks.ModelCheckpoint(weight_file, monitor='val_acc', verbose=0, save_best_only=True, mode='auto')])
 
     # visualize training history
-    displayHistory(history, epoch)
+    # displayHistory(history, epoch)
 
     score = loaded_model.evaluate_generator(data_test, steps = validation_step)
     print('Test loss:', score[0])
@@ -108,7 +130,16 @@ def loadAndTrain(data_train, data_test, weight_file, json_name = 'model.json', e
     
     return loaded_model
 
-def save_model_keras(model, dir_json = "model.json", dir_name_weight = './models/first_try.h5'):
+def save_model_keras(model, dir_json = "model.json", dir_name_weight = './models/default.h5'):
+
+    '''
+    This function saves a Keras model to the file
+
+    model:              the model to save
+    dir_json:           the name of the json file to which the model's structure will be saved
+    dir_name_wegiht:    the weight filename
+    '''
+
     # serialize model to JSON
     model_json = model.to_json()
     with open(dir_json, "w") as json_file:
@@ -117,3 +148,21 @@ def save_model_keras(model, dir_json = "model.json", dir_name_weight = './models
     model.save_weights(dir_name_weight)
 
     print("Saved model to disk")
+
+def load_model_keras(json_name, weight_file):
+
+    '''
+    This function saves a Keras model to the file
+
+    dir_json:           the name of the json file to which the model's structure will be saved
+    dir_name_wegiht:    the weight filename
+    '''
+
+    json_file = open(json_name, 'r')
+    loaded_model_json = json_file.read()
+    json_file.close()
+    loaded_model = model_from_json(loaded_model_json)
+    loaded_model.load_weights(weight_file)
+    print("Loaded model from disk")
+
+    return loaded_model

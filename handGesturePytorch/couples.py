@@ -48,7 +48,7 @@ def create_couple_batch(batch_size, file_path, prob = 0.5):
     couple = []
     label = []
     for _ in range(batch_size):
-        if random.uniform(0,1) > 0.5:
+        if random.uniform(0,1) > 0.7:
             couple.append(create_couple(file_path))
             label.append(0)
         else:

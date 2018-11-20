@@ -23,8 +23,9 @@ PCA_image(PCA_out(get_outputs(net)), name = 'before')
 model.to(device)
 model_name = 'handID'
 model_dir = './models/'
-model = firstTrain(model, model_dir, model_name, epochs = 10)
-# model = loadAndTrain(model = model_name, epoch = 20, index = 4, dir = model_dir)
+# model, lowest_loss = firstTrain(model, model_dir, model_name, epochs = 20)
+lowest_loss = np.Inf
+model, lowest_loss = loadAndTrain(model = model_name, epoch = 400, index = 4, dir = model_dir, lowest_loss=lowest_loss)
 model.to('cpu')
 PCA_image(PCA_out(get_outputs(model)), name = 'after')
 # loadAndTest(model_dir, model_name)

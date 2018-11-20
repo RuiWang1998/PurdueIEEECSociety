@@ -31,7 +31,7 @@ else:
 
 # Hyper parameters
 EPOCHS = 7
-BATCH_SIZE = 30
+BATCH_SIZE = 70
 learning_rate = 0.00001
 NUM_CLASS = 5
 GROWTH_RATE = 15

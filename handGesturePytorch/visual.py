@@ -28,7 +28,8 @@ def get_outputs(model, train_source = visual_source, dim = 128):
             i=0
             for file in glob.glob(folder + '/*.jpg'):
                 i+=1
-                outputs.append(model(torch.tensor(create_input(file).reshape((1,input_shapes[0],input_shapes[1],input_shapes[2])), dtype=torch.float)).numpy())
+                inputs = torch.tensor(create_input(file), dtype=torch.float).transpose(0, 2).transpose(1, 2).reshape(1, input_shapes[0], input_shapes[1], input_shapes[2])
+                outputs.append(model(inputs).numpy())
                 #print(i)
         #    print("folder ", n, " of ", len(glob.glob('faceid_train/*')))
         #print(len(outputs))

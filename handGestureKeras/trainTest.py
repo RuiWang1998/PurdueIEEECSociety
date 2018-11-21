@@ -5,6 +5,8 @@ from dataloader import input_shape
 from matplotlib import pyplot as plt
 from constants import SOURCE
 
+from coupleMaker import soft_max_crossEntropy
+
 # Hyper parameters
 learning_rate = 0.0001
 NUM_CLASS = 5
@@ -83,7 +85,7 @@ def firstTrain(input_shape, data_train, data_test, dir_name_weight, dir_json, ep
 
     return model
 
-def loadAndTrain(data_train, data_test, weight_file, json_name = 'model.json', epoch = 1, lossfunc = keras.losses.categorical_crossentropy, optimizer = keras.optimizers.Adam(lr = 0.0001, beta_1=0.99, beta_2=0.999, epsilon=1e-8, amsgrad=True)):
+def loadAndTrain(data_train, data_test, weight_file, json_name = 'model.json', epoch = 1, lossfunc = soft_max_crossEntropy, optimizer = keras.optimizers.Adam(lr = 0.0001, beta_1=0.99, beta_2=0.999, epsilon=1e-8, amsgrad=True)):
 
     '''
     This function loads the model and train with desired epochs and save the best result
@@ -164,5 +166,6 @@ def load_model_keras(json_name, weight_file):
     loaded_model = model_from_json(loaded_model_json)
     loaded_model.load_weights(weight_file)
     print("Loaded model from disk")
+    loaded_model.summary()
 
     return loaded_model

@@ -8,7 +8,6 @@ from constants import DOWNSCALING_FACTOR, resolution
 from keras import backend as K
 from imageProcessing import process_image
 
-
 def create_couple(file_path):
     folder=np.random.choice(glob.glob(file_path + "/*"))
     while folder == "datalab":
@@ -54,3 +53,18 @@ def contrastive_loss(y_true,y_pred):
     margin=1.
     # return K.mean( K.square(y_pred) )
     return K.mean((1. - y_true) * K.square(y_pred) + y_true * K.square(K.maximum(margin - y_pred, 0.)))
+
+def soft_max_crossEntropy(y_true, y_pred):
+
+    return K.categorical_crossentropy(y_true, K.softmax(y_pred))
+
+def vanilla_loss(y_true, inputs):
+
+    return inputs
+
+def create_input(file):
+  #  print(folder)
+
+    mat1 = np.asarray(process_image(img.imread(file), factor = DOWNSCALING_FACTOR * 5))
+    
+    return mat1

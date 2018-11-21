@@ -16,6 +16,7 @@ DATA_SOURCE = '../../PurdueIEEEdata/'
 IMAGE_DIR = './curves/'  
 DROP_RATE = 0.5
 VIS_FOLDER = 'image_visual_folder'
+VIS_SMALLER = 'image_visual_smaller'
 
 # this needs to change if the platform is changed
 if platform.system() == 'Linux':
@@ -35,3 +36,5 @@ GROWTH_RATE = 15
 TEST_PORTION = 0.8
 
 random.seed(2)
+
+MEAN_PERCENT = 0.8

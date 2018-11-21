@@ -16,7 +16,7 @@ input_shapes = (3, int(resolution[0] * DOWNSCALING_FACTOR), int(resolution[1] * 
 def create_input(file):
   #  print(folder)
 
-    mat1 = np.asarray(process_image(img.imread(file), factor = DOWNSCALING_FACTOR * 5))
+    mat1 = np.asarray(process_image(img.imread(file), factor = DOWNSCALING_FACTOR))
     
     return mat1
 
@@ -32,7 +32,6 @@ def get_outputs(model, train_source = visual_source, dim = 100):
                 output = model(inputs).numpy()
                 outputs.append(output)
                 avg.append(output)
-                print
             mean = np.mean(np.asarray(avg), axis=0)
             average.append(mean)
         outputs = np.asarray(outputs)

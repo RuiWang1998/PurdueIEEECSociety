@@ -53,7 +53,7 @@ def handCNN(num_category = 5):
     # flatten the dimensions for the linear layers
     handCNN.add(Flatten())
     handCNN.add(Dense(32, activation = 'sigmoid'))
-    handCNN.add(Dense(num_category, activation='softmax'))
+    handCNN.add(Dense(num_category, activation='relu'))
 
     return handCNN
 
@@ -93,19 +93,20 @@ def handDenseNet(input_shapes = input_shape(), growth_rate = 10, num_out = 5, op
     x = Conv2D(growth_rate, (2, 2), strides=(1, 1), padding='same')(img_input)
     x = MaxPooling2D(pool_size=2, strides=1, padding='same')(x)
 
-    x = denseBlock(x, growth_rate, kernel_sizes = (3, 3, 3), stride1 = 1, stride2 = 1, activation = 'relu', layer_num=3)
+    x = denseBlock(x, growth_rate, kernel_sizes = (2, 4, 6), stride1 = 1, stride2 = 1, activation = 'relu', layer_num=3)
 
     x = transition_layer(x, growth_rate, pool_size = 2, strides = 2)
 
-    x = denseBlock(x, growth_rate, kernel_sizes = (3, 3, 3), stride1 = 1, stride2 = 1, activation = 'relu', layer_num=3)
+    x = denseBlock(x, growth_rate, kernel_sizes = (2, 3, 4), stride1 = 1, stride2 = 1, activation = 'relu', layer_num=3)
 
     x = transition_layer(x, growth_rate, pool_size = 2, strides = 2)
 
-    x = denseBlock(x, growth_rate, kernel_sizes = (3, 3, 3), stride1 = 1, stride2 = 1, activation = 'relu', layer_num=3)
+    x = denseBlock(x, growth_rate, kernel_sizes = (1, 2, 3), stride1 = 1, stride2 = 1, activation = 'relu', layer_num=3)
 
     x = Flatten()(x)
     x = Dense(lastLinear, activation = 'relu')(x)
-    x = Dense(num_out, activation='softmax')(x)
+    x = Dense(num_out)(x)
+    x = LeakyReLU(alpha=0.3)(x)
 
     net = Model(img_input, x)
 

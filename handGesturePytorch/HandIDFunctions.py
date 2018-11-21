@@ -56,8 +56,9 @@ def test(model, device = device, loss_func = ContrastiveLoss(), save = False, tr
 
     return train_loss, test_loss
     
-def firstTrain(net, output_dir, output_file, epochs = EPOCHS):
+def firstTrain(net, output_dir, output_file, epochs = EPOCHS, train_source = SOURCE+DATA_SOURCE+TRAIN_FOLDER):
     print(net)
+    net.to(device)
     start = time.time()
     # Train the model
     lowest_loss = np.Inf
@@ -76,7 +77,7 @@ def firstTrain(net, output_dir, output_file, epochs = EPOCHS):
     time_step = time.time()
     for epoch in range(epochs):
         t_plot[epoch + 1] = epoch
-        train(net, device, batch_size=BATCH_SIZE, epoch=epoch)
+        train(net, device, batch_size=BATCH_SIZE, epoch=epoch, train_source = train_source)
         train_loss_plot[epoch + 1], test_loss_plot[epoch + 1] = test(net)
         print("Epoch: {}| time elapsed: {} s\n".format(epoch, time.time()-time_step))
         time_step = time.time()

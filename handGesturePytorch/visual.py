@@ -78,6 +78,16 @@ def save_mean(mean, model_name, dim = 100, num_class = 5):
 
     return
 
+def save_mean_2d(mean, model_name, dim = 100, num_class = 5):
+    '''
+    This function saves the mean into a csv file
+    '''
+
+    a = np.asarray(mean)
+    np.savetxt("./means/" + str(model_name) + ".csv", a, delimiter=",")
+
+    return
+
 def load_mean(model_name):
     '''
     This function loads the mean from a csv file

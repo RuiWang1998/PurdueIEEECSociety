@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import torch.onnx
 import time
+import glob
 
 from Model import handCNN, handCNNDense, ContrastiveLoss
 from couples import create_couple_batch
@@ -118,3 +119,30 @@ def loadAndTest(dir, model):
     net = torch.load(dir + model)
     print(net)
     test(net)
+
+#def test_all(model, source):
+#    data, target = create_couple_batch(1, source)
+#    data, target = data.to(device = 'cpu', dtype=torch.float), target.to('cpu')
+#    output1 = model(data[:, 0, :, :, :].transpose(1, 3).transpose(2, 3))
+#    output2 = model(data[:, 1, :, :, :].transpose(1, 3).transpose(2, 3))
+#    target
+#    pdist(output1, output2)
+
+#    for folder in glob.glob(train_source + "/*"):
+#        print("Loading from folder" + folder)
+#        data = []
+#        for file in glob.glob(folder + '/*.jpg'):
+#            mat1 = np.asarray(process_image(img.imread(photo_file), factor = DOWNSCALING_FACTOR * 5))
+#            data.append()
+
+def get_mean(model, source):
+    averages = []
+
+    for folder in glob.glob(source + "/"):
+        avg = []
+        for file in glob.glob(folder + '/'):
+            mat1 = np.asarray(process_image(img.imread(photo_file), factor = DOWNSCALING_FACTOR * 5))
+            avg.append(output1 = model(data[:, :, :, :].transpose(0, 2).transpose(1, 2)))
+        averages.append(np.mean(np.asarray(avg), axis=0))
+
+    return averages

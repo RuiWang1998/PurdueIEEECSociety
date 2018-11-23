@@ -22,6 +22,7 @@ SECOND_SOURCE = 'Users/Rui/Documents/GitHub/PurdueIEEECSociety/handGesturePytorc
 DATA_SOURCE = '../../PurdueIEEEdata/'
 IMAGE_DIR = './curves/'  
 VIS_FOLDER = 'image_visual_folder'
+VIS_SMALLER = 'image_visual_smaller'
 
 # this needs to change if the platform is changed
 if platform.system() == 'Linux':
@@ -31,7 +32,7 @@ else:
 
 # Hyper parameters
 EPOCHS = 7
-BATCH_SIZE = 70
+BATCH_SIZE = 80
 learning_rate = 0.00001
 NUM_CLASS = 5
 GROWTH_RATE = 15

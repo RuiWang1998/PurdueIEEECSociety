@@ -108,6 +108,7 @@ class handCNN(nn.Module):
         # self.layer5 = nn.Linear(int(480 * 640 * 32 * factor ** 2 // ((2 ** (self.number_pooling_layer - 1)) ** 2)), 200)
         self.layer5 = nn.Linear(6144, 200)
         self.fc = nn.Linear(200, num_class)
+        self.leakyReLU = nn.LeakyReLU()
         
     def forward(self, x):
         out = self.layer1(x)
@@ -116,7 +117,7 @@ class handCNN(nn.Module):
         out = self.layer4(out)
         out = out.reshape(out.size(0), -1)
         out = self.layer5(out)
-        out = torch.sigmoid(out)
+        out = self.leakyReLU(out)
         out = self.fc(out)
 
         return out
@@ -134,6 +135,6 @@ class ContrastiveLoss(nn.Module):
     def forward(self, output1, output2, label):
         pdist = nn.PairwiseDistance()
         euclidean_distance = pdist(output1, output2)
-        loss_contrastive = torch.mean((1-label).float() * torch.pow(euclidean_distance, 2) + label.float() / (euclidean_distance / 100))
+        loss_contrastive = torch.mean((1-label).float() * torch.pow(euclidean_distance, 2) + label.float() / (euclidean_distance / 1000000))
 
         return loss_contrastive

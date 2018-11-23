@@ -60,6 +60,11 @@ def PCA_image(X_embedded, name, item = 196):
     plt.gcf().clear()
 
 def PCA_out(outputs):
+    
+    '''
+    from https://github.com/normandipalo/faceID_beta/blob/master/faceid_beta.ipynb
+    '''
+
     X_embedded = TSNE(2).fit_transform(outputs)
     X_PCA = PCA(3).fit_transform(outputs)
 

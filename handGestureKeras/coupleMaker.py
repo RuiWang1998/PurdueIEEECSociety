@@ -52,7 +52,12 @@ def euclidean_distance(inputs):
 def contrastive_loss(y_true,y_pred):
     margin=1.
     # return K.mean( K.square(y_pred) )
-    return K.mean((1. - y_true) * K.square(y_pred) + y_true * K.square(K.maximum(margin - y_pred, 0.)))
+
+    ## parts of the code came from https://github.com/normandipalo/faceID_beta/blob/master/faceid_beta.ipynb
+
+    self_defined = K.sum(1. - y_true) * K.square(y_pred) + y_true * 1000./K.square(y_pred)
+    original = K.mean((1. - y_true) * K.square(y_pred) + y_true * K.square(K.maximum(margin - y_pred, 0.)))
+    return self_defined
 
 def soft_max_crossEntropy(y_true, y_pred):
 
@@ -61,6 +66,7 @@ def soft_max_crossEntropy(y_true, y_pred):
 def vanilla_loss(y_true, inputs):
 
     return inputs
+
 
 def create_input(file):
   #  print(folder)

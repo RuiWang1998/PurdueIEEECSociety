@@ -12,6 +12,7 @@ def create_couple(file_path):
     while folder == "datalab":
       folder=np.random.choice(glob.glob(file_path + "/*"))
   #  print(folder)
+    print("Correct foler" + folder)
     photo_file = np.random.choice(glob.glob(folder + "/*.jpg"))
     mat1 = np.asarray(process_image(img.imread(photo_file), factor = DOWNSCALING_FACTOR * 5))
     #plt.imshow(mat1)
@@ -29,6 +30,7 @@ def create_wrong(file_path):
     folder=np.random.choice(glob.glob(file_path + "/*"))
     while folder == "datalab":
       folder=np.random.choice(glob.glob(file_path + "/*"))    
+    print("folder1: "+ str(folder))
     photo_file = np.random.choice(glob.glob(folder + "/*.jpg"))
     mat1 = np.asarray(process_image(img.imread(photo_file), factor = DOWNSCALING_FACTOR * 5))
     #plt.imshow(mat1)
@@ -37,6 +39,7 @@ def create_wrong(file_path):
     folder2=np.random.choice(glob.glob(file_path + "/*"))
     while folder==folder2 or folder2=="datalab": #it activates if it chose the same folder
         folder2=np.random.choice(glob.glob(file_path + "/*"))
+    print("folder2: "+folder2)
     photo_file = np.random.choice(glob.glob(folder2 + "/*.jpg"))
     mat2 = np.asarray(process_image(img.imread(photo_file), factor = DOWNSCALING_FACTOR * 5))
     #plt.imshow(mat2)
@@ -48,7 +51,7 @@ def create_couple_batch(batch_size, file_path, prob = 0.5):
     couple = []
     label = []
     for _ in range(batch_size):
-        if random.uniform(0,1) > 0.7:
+        if random.uniform(0,1) > 0.8:
             couple.append(create_couple(file_path))
             label.append(0)
         else:
@@ -56,3 +59,13 @@ def create_couple_batch(batch_size, file_path, prob = 0.5):
             label.append(1)
 
     return torch.tensor(np.asarray(couple)), torch.tensor(label)
+
+def save_mean(mean, model_name):
+    '''
+    This function saves the mean into a csv file
+    '''
+
+    a = np.asarray(mean)
+    np.savetxt("./means/" + str(model_name) + ".csv", a, delimiter=",")
+
+    return

@@ -23,12 +23,12 @@ means = csv.reader(open("./means/denseBiggerBest.csv", "r"), delimiter=",")
 means = list(means)
 means = np.array(means).astype("float")
 
-k = 0
 avg_distance = np.zeros(means.shape[0])
 max_distance = np.zeros(means.shape[0])
 
 average_individual = []
 
+k = 0
 for i, output in enumerate(all_output):
 	# check if to switch
 	if i % 196 == 0 and i != 0:

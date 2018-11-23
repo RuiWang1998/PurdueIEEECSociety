@@ -74,7 +74,7 @@ def denseBlock(x, growth_rate, kernel_sizes, stride1, stride2, activation = 'rel
     for i, kernel_size in enumerate(kernel_sizes):
         x1 = single_layer(x, growth_rate, kernel_size = kernel_size, stride1 = 1,  pool_size = 3, stride2 = 1, i = i + 1, activation = 'relu')
         if i != len(kernel_sizes) - 1:
-            x = concatenate([x1, x], axis=2)
+            x = concatenate([x1, x], axis=3)
 
     return x1
 

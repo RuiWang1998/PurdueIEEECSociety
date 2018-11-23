@@ -7,35 +7,40 @@ import glob
 import numpy as np
 import matplotlib.image as img
 
-from constants import SOURCE, DATA_SOURCE, TRAIN_FOLDER, VIS_FOLDER, resolution, DOWNSCALING_FACTOR
+from constants import SOURCE, DATA_SOURCE, TRAIN_FOLDER, VIS_FOLDER, resolution, DOWNSCALING_FACTOR, VIS_SMALLER
 from imageProcessing import process_image
 
 visual_source = SOURCE+DATA_SOURCE+VIS_FOLDER
+visual_smaller = SOURCE+DATA_SOURCE+VIS_SMALLER
 input_shapes = (3, int(resolution[0] * DOWNSCALING_FACTOR), int(resolution[1] * DOWNSCALING_FACTOR))
 
-def create_input(file):
+def create_input(file, factor = DOWNSCALING_FACTOR):
   #  print(folder)
 
-    mat1 = np.asarray(process_image(img.imread(file), factor = DOWNSCALING_FACTOR))
+    mat1 = np.asarray(process_image(img.imread(file), factor = factor))
     
     return mat1
 
-def get_outputs(model, train_source = visual_source, dim = 100):
+def get_outputs(model, train_source = visual_smaller, dim = 100, factor = DOWNSCALING_FACTOR):
     model.eval()
     with torch.no_grad():
         outputs=[]
         average=[]
+        maximum=[]
         for folder in glob.glob(train_source + "/*"):
+            print("Loading from folder" + folder)
             avg = []
             for file in glob.glob(folder + '/*.jpg'):
-                inputs = torch.tensor(create_input(file), dtype=torch.float).transpose(0, 2).transpose(1, 2).reshape(1, input_shapes[0], input_shapes[1], input_shapes[2])
+                inputs = torch.tensor(create_input(file, factor = factor), dtype=torch.float).transpose(0, 2).transpose(1, 2).reshape(1, input_shapes[0], input_shapes[1], input_shapes[2])
                 output = model(inputs).numpy()
                 outputs.append(output)
                 avg.append(output)
             mean = np.mean(np.asarray(avg), axis=0)
             average.append(mean)
+            maxima = np.max(np.asarray(avg),axis=0)
+            maximum.append(maxima)
         outputs = np.asarray(outputs)
-    return outputs.reshape((-1,dim)), np.asarray(average)
+    return outputs.reshape((-1,dim)), np.asarray(average), np.asarray(maximum)
 
 def PCA_image(X_embedded, name):
     color = 0

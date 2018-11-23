@@ -68,6 +68,9 @@ def input_shape(downscaling_factor = DOWNSCALING_FACTOR):
 input_shapes = input_shape()
 
 def generator(batch_size, train_folder):
+    '''
+    from https://github.com/normandipalo/faceID_beta/blob/master/faceid_beta.ipynb
+    '''
   
     while 1:
         X=[]
@@ -91,7 +94,9 @@ def generator(batch_size, train_folder):
         yield [X[:,0],X[:,1]],y
 
 def val_generator(batch_size, test_folder):
-  
+    '''
+    from https://github.com/normandipalo/faceID_beta/blob/master/faceid_beta.ipynb
+    '''
     while 1:
         X=[]
         y=[]

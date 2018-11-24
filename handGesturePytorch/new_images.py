@@ -7,7 +7,9 @@ from constants import DATA_SOURCE, SOURCE, VIS_FOLDER
 IS_MAC = (platform.system() == 'Darwin')
 
 def get_images(numSamples: int, secsBetweenSamples: float, name: str):
-
+    '''
+    This function's code is from https://github.com/PurdueIEEEComputerSociety/hand_recognition_project
+    '''
     # On my laptop
     # 0 front camera
     # 1 back camera

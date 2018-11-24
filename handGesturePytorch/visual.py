@@ -45,9 +45,11 @@ def get_outputs(model, train_source = visual_smaller, dim = 100, factor = DOWNSC
 def PCA_image(X_embedded, name):
     color = 0
     j = 0
+    k = 0
+    config = [158, 326, 481, 642, 800]
     for i in range(len((X_embedded))):
         el = X_embedded[i]
-        if i % 12 == 0 and not i==0:
+        if i == config[k]:
             color+=1
             color=color%10
             j += 1
@@ -96,3 +98,26 @@ def load_mean(model_name):
     mean = np.loadtxt(open("./means/" + str(model_name) + ".csv", "r"), delimiter=",", skiprows=0)
 
     return mean
+
+def random_euclidean(matrix, idx, idx2):
+    distance = matrix[idx, :] - matrix[idx2, :]
+    eu_dis = euclidean_distance(distance, axis = 0)
+    return eu_dis
+
+
+def euclidean_distance(matrix, axis=1):
+	euclidean_distance_vector = np.sum(np.square(matrix), axis=axis)
+	return euclidean_distance_vector
+
+def euclidean_data(matrix, axis=1):
+
+	euclidean_avg = np.mean(euclidean_distance(np.asarray(matrix)), axis=axis)
+	euclidean_max = np.max(euclidean_distance(np.asarray(matrix)), axis=axis)
+
+	return euclidean_avg, euclidean_max
+
+def maximum_distance(outputs, start, end, k):
+    for i in range(158):
+        max.append(random_euclidean(outputs, k, i))
+
+    return np.max(np.asarray(max))

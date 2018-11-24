@@ -87,7 +87,7 @@ def firstTrain(net, output_dir, output_file, folders, photo_files, epochs = EPOC
         print("Epoch: {}| time elapsed: {} s\n".format(epoch, time.time()-time_step))
         time_step = time.time()
 
-        if test_loss_plot[epoch + 1] <= lowest_loss:
+        if test_loss_plot[epoch] <= lowest_loss:
             lowest_loss = test_loss_plot[epoch]
             test_volume = test_count
             dir = output_dir
@@ -103,21 +103,15 @@ def firstTrain(net, output_dir, output_file, folders, photo_files, epochs = EPOC
     plt.gcf().clear()
     return net, lowest_loss
 
-def loadAndTrain(model, dir, epochs = EPOCHS, index = 1, lowest_loss = np.Inf, train_source = SOURCE+DATA_SOURCE+TRAIN_FOLDER):
+def loadAndTrain(model, dir, folders, photo_files, epochs = EPOCHS, index = 1, lowest_loss = np.Inf, train_source = SOURCE+DATA_SOURCE+TRAIN_FOLDER):
     net = torch.load(dir + model)
     print(net)
     optimizer_2 = optimizer(net)
     time_step = time.time()
 
-    folders=[]
-    photo_files=[]
-    folders=folders.append([folder for folder in glob.glob(train_source + "/*")])
-    for folder in folders:
-        photo_files.append(glob.glob(folders + "/*.jpg"))
-
     for epoch in range(epochs):
 
-        train(net, folders=folders, photo_files=photo_files, epoch = epoch, batch_size = BATCH_SIZE)
+        train(net, folders=folders, photo_files=photo_files, epoch = epoch, batch_size = BATCH_SIZE, epochs = epochs)
         _, test_loss = test(net, folders=folders, photo_files=photo_files)
         if test_loss < lowest_loss:
             lowest_loss = test_loss

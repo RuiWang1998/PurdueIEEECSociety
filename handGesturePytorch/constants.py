@@ -38,6 +38,7 @@ NUM_CLASS = 5
 GROWTH_RATE = 15
 TEST_PORTION = 0.8
 resolution = (480, 640)
+acceptable_range = 60000
 
 def optimizer(model, adam = True):
     if adam:

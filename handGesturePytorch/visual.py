@@ -28,7 +28,6 @@ def get_outputs(model, train_source = visual_smaller, dim = 100, factor = DOWNSC
         average=[]
         maximum=[]
         for folder in glob.glob(train_source + "/*"):
-            print("Loading from folder" + folder)
             avg = []
             for file in glob.glob(folder + '/*.jpg'):
                 inputs = torch.tensor(create_input(file, factor = factor), dtype=torch.float).transpose(0, 2).transpose(1, 2).reshape(1, input_shapes[0], input_shapes[1], input_shapes[2])
@@ -70,7 +69,7 @@ def PCA_out(outputs):
 
     return X_embedded
 
-def save_mean(mean, model_name, dim = 100, num_class = 5):
+def save_mean(mean, model_name):
     '''
     This function saves the mean into a csv file
     '''

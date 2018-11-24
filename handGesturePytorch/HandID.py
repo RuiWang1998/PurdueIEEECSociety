@@ -32,15 +32,16 @@ for folder in folders:
 # model.to(device)
 model_name = 'handID'
 model_dir = './models/'
-# model = torch.load(model_dir + model_name).to('cpu')
-# model, lowest_loss = firstTrain(model, model_dir, model_name, folders=folders, photo_files=photo_files, epochs = 400)
-lowest_loss = np.Inf
-model, lowest_loss = loadAndTrain(model = model_name, epochs = 1000, index = 4, dir = model_dir, lowest_loss=lowest_loss, folders=folders, photo_files=photo_files)
-model.to('cpu')
-outputs, mean, max = get_outputs(model, train_source=SOURCE+DATA_SOURCE+TRAIN_FOLDER, factor=DOWNSCALING_FACTOR * 5)
-save_mean(outputs, model_name + 'all')
-save_mean(mean[:, 0, :], model_name + 'mean')
-save_mean(max[:, 0, :], model_name + 'max')
-PCA_image(PCA_out(outputs), name = 'after')
-# loadAndTest(model_dir, model_name)
-# export(model_name, model_dir, optimizer_2 = optimizer)
+model = torch.load(model_dir + model_name).to('cpu')
+if __name__ == '__main__':
+    # model, lowest_loss = firstTrain(model, model_dir, model_name, folders=folders, photo_files=photo_files, epochs = 400)
+    lowest_loss = np.Inf
+    # model, lowest_loss = loadAndTrain(model = model_name, epochs = 1000, index = 4, dir = model_dir, lowest_loss=lowest_loss, folders=folders, photo_files=photo_files)
+    model.to('cpu')
+    outputs, mean, max = get_outputs(model, train_source=SOURCE+DATA_SOURCE+TRAIN_FOLDER, factor=DOWNSCALING_FACTOR * 5)
+    save_mean(outputs, model_name + 'all')
+    save_mean(mean[:, 0, :], model_name + 'mean')
+    save_mean(max[:, 0, :], model_name + 'max')
+    PCA_image(PCA_out(outputs), name = 'after')
+    # loadAndTest(model_dir, model_name)
+    # export(model_name, model_dir, optimizer_2 = optimizer)

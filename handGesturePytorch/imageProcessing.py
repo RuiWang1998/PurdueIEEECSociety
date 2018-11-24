@@ -140,5 +140,5 @@ def imageAlloc():
     cleanAll()
     test_size = preprocessing(PARENT_FOLDER_NAME, SOURCE + DATA_SOURCE, TRAIN_FOLDER, TEST_FOLDER, DOWNSCALING_FACTOR, prob = TEST_PORTION, augmentation=augmented)
 
-# imageAlloc(augmented = True)
-# imageAlloc(augmented = False)
+if __name__ == '__main__':
+    imageAlloc()

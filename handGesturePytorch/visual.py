@@ -16,12 +16,20 @@ input_shapes = (3, int(resolution[0] * DOWNSCALING_FACTOR), int(resolution[1] * 
 
 def create_input(file, factor = DOWNSCALING_FACTOR):
   #  print(folder)
+    '''
+    This function creates a numpy matrix from a file specified by file and downscaling by a factor
+    '''
 
     mat1 = np.asarray(process_image(img.imread(file), factor = factor))
     
     return mat1
 
 def get_outputs(model, train_source = visual_smaller, dim = 100, factor = DOWNSCALING_FACTOR):
+
+    '''
+    This function gets the output of the model of every picture in the source
+    '''
+    
     model.eval()
     with torch.no_grad():
         outputs=[]
@@ -42,6 +50,10 @@ def get_outputs(model, train_source = visual_smaller, dim = 100, factor = DOWNSC
     return outputs.reshape((-1,dim)), np.asarray(average), np.asarray(maximum)
 
 def PCA_image(X_embedded, name):
+    '''
+    This function displays the result of the training from the contrastive loss
+    '''
+
     color = 0
     j = 0
     k = 0
@@ -99,24 +111,27 @@ def load_mean(model_name):
     return mean
 
 def random_euclidean(matrix, idx, idx2):
+    '''
+    This function returns the euclidean distance between two vectors in the matrix
+    '''
     distance = matrix[idx, :] - matrix[idx2, :]
     eu_dis = euclidean_distance(distance, axis = 0)
     return eu_dis
 
 
 def euclidean_distance(matrix, axis=1):
-	euclidean_distance_vector = np.sum(np.square(matrix), axis=axis)
-	return euclidean_distance_vector
+    '''
+    This function calculates the euclidean distance of the vector from the origin
+    '''
+    euclidean_distance_vector = np.sum(np.square(matrix), axis=axis)
+    return euclidean_distance_vector
 
 def euclidean_data(matrix, axis=1):
+    '''
+    This function computes the average and the maximum euclidean_distance of a host of vectors from the origin
+    '''
 
-	euclidean_avg = np.mean(euclidean_distance(np.asarray(matrix)), axis=axis)
-	euclidean_max = np.max(euclidean_distance(np.asarray(matrix)), axis=axis)
+    euclidean_avg = np.mean(euclidean_distance(np.asarray(matrix)), axis=axis)
+    euclidean_max = np.max(euclidean_distance(np.asarray(matrix)), axis=axis)
 
-	return euclidean_avg, euclidean_max
-
-def maximum_distance(outputs, start, end, k):
-    for i in range(158):
-        max.append(random_euclidean(outputs, k, i))
-
-    return np.max(np.asarray(max))
+    return euclidean_avg, euclidean_max

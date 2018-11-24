@@ -8,6 +8,9 @@ from dataloader import train_loader, test_loader, all_loader
 from constants import EPOCHS, optimizer, device, loss_func, SOURCE
 
 def train(model, device, train_loader, loss_func = loss_func, epoch = EPOCHS):
+    '''
+    This function performs the training step for just one epoch
+    '''
     model.train()
     optim = optimizer(model)
     for batch_idx, (data, target) in enumerate(train_loader):
@@ -25,6 +28,9 @@ def train(model, device, train_loader, loss_func = loss_func, epoch = EPOCHS):
     return
 
 def test(model, device, test_loader, loss_func, train_loader, save = False):
+    '''
+    This function tests the model's capacity
+    '''
     model.eval()
     test_loss = 0
     train_loss = 0
@@ -59,6 +65,9 @@ def test(model, device, test_loader, loss_func, train_loader, save = False):
     return 100. * correct_train / len(train_loader.dataset), 100. * correct_test / len(test_loader.dataset)
     
 def firstTrain(net, output_dir, output_file, epochs = EPOCHS):
+    '''
+    This function is called to train a model uninitialized
+    '''
     print(net)
     start = time.time()
     # Train the model
@@ -100,6 +109,9 @@ def firstTrain(net, output_dir, output_file, epochs = EPOCHS):
     plt.gcf().clear()
 
 def loadAndTrain(model, dir, epoch = EPOCHS, index = 1, best_accuracy = 90):
+    '''
+    This function is called when training a model loaded from a file
+    '''
     net = torch.load(dir + model)
     print(net)
     optimizer_2 = optimizer(net)
@@ -113,6 +125,9 @@ def loadAndTrain(model, dir, epoch = EPOCHS, index = 1, best_accuracy = 90):
     return
 
 def loadAndTest(dir, model):
+    '''
+    This function loads a model and test its performance
+    '''
     net = torch.load(dir + model)
     print(net)
     test(net, device, all_loader, loss_func, all_loader)

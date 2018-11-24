@@ -12,7 +12,13 @@ import glob
 
 
 def predict(model, inputs):
+    '''
+    this fucntion compares the output of the model with the means of the gestures known, either trained before or input by the user
 
+    model:      the model which predicts
+    inputs:     the inputs generated from a picture
+    '''
+    model.eval()
     with torch.no_grad():
         inputs = torch.tensor(inputs)
         output = model(inputs).numpy()
@@ -34,19 +40,19 @@ def predict(model, inputs):
 
 if __name__ == '__main__':
 
-    all_output = csv.reader(open("./means/handIDall.csv", "r"), delimiter=",")
-    all_output = list(all_output)
-    all_output = np.array(all_output).astype("float")
-
+    # loading the mean from the file saved befre
     means = csv.reader(open("./means/handIDmean.csv", "r"), delimiter=",")
     means = list(means)
     means = np.array(means).astype("float")
 
+    # loading the trained model
     model_name = 'handID'
     model_dir = './models/'
     model = torch.load(model_dir + model_name).to('cpu')
 
+    # prediction
     min_idx, certainty = predict(model, torch.tensor(create_input(SOURCE+DATA_SOURCE+VIS_FOLDER+'/testcapture0.jpg', factor = DOWNSCALING_FACTOR), dtype=torch.float).transpose(0, 2).transpose(1, 2).reshape(1, input_shapes[0], input_shapes[1], input_shapes[2]))
+
     if certainty:
         print("The class is {} with certainty".format(min_idx))
     else:

@@ -7,10 +7,7 @@ input_shapes = (3, int(resolution[0] * DOWNSCALING_FACTOR), int(resolution[1] * 
 
 import glob
 
-all_output = csv.reader(open("./means/handIDall.csv", "r"), delimiter=",")
-all_output = list(all_output)
-all_output = np.array(all_output).astype("float")
-
+# load means
 means = csv.reader(open("./means/handIDmean.csv", "r"), delimiter=",")
 means = list(means)
 means = np.array(means).astype("float")
@@ -24,23 +21,30 @@ model = torch.load(model_dir + model_name).to('cpu')
 
 outputs = []
 def test_final(model, folder):
-	result = []
-	output_average = []
-	with torch.no_grad():
-		for file in glob.glob(folder + '/5' + '/*.jpg'):
-			inputs = torch.tensor(create_input(file, factor = DOWNSCALING_FACTOR), dtype=torch.float).transpose(0, 2).transpose(1, 2).reshape(1, input_shapes[0], input_shapes[1], input_shapes[2])
-			output = model(inputs).numpy()
-			eu_distances = []
-			output_average.append(output)
-			for mean in means:
-				displacement = output - mean
-				eu_dis = euclidean_distance(displacement)
-				eu_distances.append(eu_dis)
-			result.append(np.argmin(np.asarray(eu_distances)))
+    '''
+    This function creates new labels in the model
 
-		new_mean = np.mean(np.asarray(output_average), axis=0)
+    model:      the model that does the prediction
+    folder:     the folder in which the new pictures are stored
+    '''
 
-	return result, new_mean
+    result = []
+    output_average = []
+    with torch.no_grad():
+        for file in glob.glob(folder + '/5' + '/*.jpg'):
+            inputs = torch.tensor(create_input(file, factor = DOWNSCALING_FACTOR), dtype=torch.float).transpose(0, 2).transpose(1, 2).reshape(1, input_shapes[0], input_shapes[1], input_shapes[2])
+            output = model(inputs).numpy()
+            eu_distances = []
+            output_average.append(output)
+            for mean in means:
+                displacement = output - mean
+                eu_dis = euclidean_distance(displacement)
+                eu_distances.append(eu_dis)
+            result.append(np.argmin(np.asarray(eu_distances)))
+
+        new_mean = np.mean(np.asarray(output_average), axis=0)
+
+    return result, new_mean
 
 result, new_mean = test_final(model, SOURCE+DATA_SOURCE+VIS_FOLDER)
 

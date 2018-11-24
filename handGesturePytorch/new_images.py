@@ -41,6 +41,12 @@ def get_images(numSamples: int, secsBetweenSamples: float, name: str):
     cap.release()
 
 def getNew(size):
+    '''
+    This function is called when a new gesture is getting input from the user
+
+    size:   the number pictures to capture
+    '''
+
     time_step = time.time()
     k = 3
     while time.time() - time_step <= 3:

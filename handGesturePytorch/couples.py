@@ -8,6 +8,9 @@ import matplotlib.image as img
 from constants import DOWNSCALING_FACTOR, resolution
 
 def create_couple(file_path, folder, photo_file):
+    '''
+    This fucntion creates a couple of input matrix from the same folder
+    '''
   #  print(folder)
     # print("Correct foler" + folder)
 
@@ -24,7 +27,9 @@ def create_couple(file_path, folder, photo_file):
     return np.array([mat1, mat2]), photo_file
 
 def create_wrong(file_path, folder, photo_file, photo = False):
-
+    '''
+    This function creates a couple of input matrix from the different folder
+    '''
     mat1 = np.asarray(process_image(img.imread(photo_file), factor = DOWNSCALING_FACTOR * 5))
     #plt.imshow(mat1)
     #plt.show()
@@ -41,6 +46,10 @@ def create_wrong(file_path, folder, photo_file, photo = False):
     return np.array([mat1, mat2]), folder, photo_file
 
 def create_couple_batch(batch_size, file_path, folders, photo_files, prob = 0.5):
+    '''
+    This function creates batchs of couples with the probability specified
+    '''
+
     couple = []
     label = []
 

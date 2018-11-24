@@ -11,6 +11,9 @@ from constants import DOWNSCALING_FACTOR, EPOCHS, learning_rate, NUM_CLASS, GROW
 
 
 def train(model, folders, photo_files, device = device, batch_size = 15, loss_func = ContrastiveLoss(), epoch = EPOCHS, train_source = SOURCE+DATA_SOURCE+TRAIN_FOLDER, epochs = EPOCHS):
+    '''
+    This function performs the training step for just one epoch
+    '''
     model.train()
     optim = optimizer(model)
     steps = int(3 * train_count/batch_size)
@@ -32,6 +35,10 @@ def train(model, folders, photo_files, device = device, batch_size = 15, loss_fu
     return
 
 def test(model, folders, photo_files, device = device, loss_func = ContrastiveLoss(), save = False, train_source = SOURCE+DATA_SOURCE+TRAIN_FOLDER, test_source = SOURCE+DATA_SOURCE+TEST_FOLDER):
+    '''
+    This function tests the model's capacity
+    '''
+
     model.eval()
     test_loss = 0
     train_loss = 0
@@ -60,7 +67,11 @@ def test(model, folders, photo_files, device = device, loss_func = ContrastiveLo
     return train_loss, test_loss
     
 def firstTrain(net, output_dir, output_file, folders, photo_files, epochs = EPOCHS, train_source = SOURCE+DATA_SOURCE+TRAIN_FOLDER):
+    '''
+    This function is called to train a model uninitialized
+    '''
     print(net)
+
     net.to(device)
     start = time.time()
     # Train the model
@@ -104,6 +115,9 @@ def firstTrain(net, output_dir, output_file, folders, photo_files, epochs = EPOC
     return net, lowest_loss
 
 def loadAndTrain(model, dir, folders, photo_files, epochs = EPOCHS, index = 1, lowest_loss = np.Inf, train_source = SOURCE+DATA_SOURCE+TRAIN_FOLDER):
+    '''
+    This function is called when training a model loaded from a file
+    '''
     net = torch.load(dir + model)
     print(net)
     optimizer_2 = optimizer(net)
@@ -122,6 +136,10 @@ def loadAndTrain(model, dir, folders, photo_files, epochs = EPOCHS, index = 1, l
     return net, lowest_loss
 
 def loadAndTest(dir, model):
+    '''
+    This function loads a model and test its performance
+    '''
+
     net = torch.load(dir + model)
     print(net)
     test(net)
@@ -140,15 +158,3 @@ def loadAndTest(dir, model):
 #        for file in glob.glob(folder + '/*.jpg'):
 #            mat1 = np.asarray(process_image(img.imread(photo_file), factor = DOWNSCALING_FACTOR * 5))
 #            data.append()
-
-def get_mean(model, source):
-    averages = []
-
-    for folder in glob.glob(source + "/"):
-        avg = []
-        for file in glob.glob(folder + '/'):
-            mat1 = np.asarray(process_image(img.imread(photo_file), factor = DOWNSCALING_FACTOR * 5))
-            avg.append(output1 = model(data[:, :, :, :].transpose(0, 2).transpose(1, 2)))
-        averages.append(np.mean(np.asarray(avg), axis=0))
-
-    return averages

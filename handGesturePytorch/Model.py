@@ -4,6 +4,9 @@ import torch.nn as nn
 import torch.functional as F
 
 class handCNNDense(nn.Module):
+    '''
+    This model is composed of three dense blocks inspired by https://arxiv.org/abs/1608.06993 followed by one linear output layer
+    '''
 
     def __init__(self, num_class = 5, factor = 0.1, k = 10):
         super(handCNNDense, self).__init__()

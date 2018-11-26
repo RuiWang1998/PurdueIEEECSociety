@@ -1,7 +1,3 @@
-Learning process
-
-![Grid](LearningProcess.png)
-
 # Files:
 
 In `constants.py` you will find the constants I defined for this projects as well as hyperparameters
@@ -24,6 +20,10 @@ In `couples.py` you will find the functions for creating couples for the one sho
 `predict.py` does the prediction for the new picture and indicates the confidence
 
 `visual.py` performs visualization for one-shot-learning process
+
+### Learning process
+
+![Grid](LearningProcess.png)
 
 ## vanilla classification
 In `main.py` you will find the training and testing for the vanilla classification models.
